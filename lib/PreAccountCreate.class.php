@@ -5,12 +5,13 @@ namespace music_matching_app\lib;
 require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 
 use music_matching_app\Bootstrap;
+use music_matching_app\lib\Token;
 
 class PreAccountCreate
 {
-    public function registPreAccount($mail_address, $password, $db){
+    public function createPreAccount($mail_address, $password, $db){
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
-        $url_token = hash('sha256',uniqid(rand(),1));
+        $url_token = Token::createToken();
 
         $table = 'pre_users';
         $insData = [

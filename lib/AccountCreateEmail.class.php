@@ -22,12 +22,10 @@ class AccountCreateEmail{
         }else{
             //未登録
             $pre = new PreAccountCreate;
-            $url = $pre->registPreAccount($mail_address, $password, $this->db);
+            $url = $pre->createPreAccount($mail_address, $password, $this->db);
 
-            $type = 'regist';
-
-            $mail = new Mail;
-            $mail->sendMail($type, $mail_address, $url);
+            $subject = 'test';
+            Mail::sendMail($mail_address, $subject, $url);
         }
     }
 
@@ -38,8 +36,6 @@ class AccountCreateEmail{
         $arrVal = [$mail_address];
         $count = $this->db->count($table, $where, $arrVal);
 
-        echo $count;
         return boolval($count);
-
     }
 }
