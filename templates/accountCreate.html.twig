@@ -2,12 +2,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>accountCreate</title>
+    <title>新規登録</title>
 </head>
 <body>
     <form method="post" action="">
-        メールアドレス<input type="text" name="mail_address">
-        パスワード<input type="password" name="password">
+        <table>
+            <tr>
+                <th>メールアドレス</th>
+                <td><input type="text" name="mail_address"></td>
+            </tr>
+
+            <tr>
+                <th>パスワード</th>
+                <td><input type="password" name="password"></td>
+            </tr>
+        </table>
+
         <input type="submit" value="送信する">
     </form>
 </body>

@@ -5,7 +5,7 @@ namespace music_matching_app\lib;
 require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 
 use music_matching_app\Bootstrap;
-use music_matching_app\lib\Token;
+use music_matching_app\lib\TokenManager;
 
 class PasswordReset
 {
@@ -22,7 +22,7 @@ class PasswordReset
         echo 'メールを送信しました。';
         $accountInfo = $this->accountSearch($mail_address);
         if(!empty($accountInfo)){
-            $password_reset_token = Token::createToken();
+            $password_reset_token = TokenManager::createToken();
 
             $table = 'password_reset';
             $insData = [

@@ -15,11 +15,6 @@ class PasswordChange
         $this->db = $db;
     }
 
-    public function checkCurrentPassword($currentPassword)
-    {
-        //パスワード変更時に確認する
-    }
-
     public function changePassword($newPassword, $member_id)
     {
         $newPassword_hash = password_hash($newPassword,PASSWORD_DEFAULT);
@@ -32,7 +27,7 @@ class PasswordChange
         $arrWhereVal = [$member_id];
 
         $res = $this->db->update($table, $where, $insData, $arrWhereVal);
-
+        return $res;
         //ログインする
     }
 }
