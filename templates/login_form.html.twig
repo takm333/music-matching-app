@@ -2,8 +2,9 @@
     <label class="text-gray-700 text-sm">メールアドレス</label>
 </div>
 
-<div>
-    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:ring-2 ring-slate-200 mb-6" type="text" name="mail_address">
+<div class="mb-6">
+    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none  {% if errArr.mail_address | length > 0 %} ring-2 ring-red-400 {% else %} focus:ring-2 ring-slate-200 {% endif %} type="text" name="mail_address" {% if dataArr.mail_address | length > 0 %} value="{{ dataArr.mail_address }}"{% endif %} >
+    <p class="text-red-500">{{ errArr.mail_address }}</p>
 </div>
 
 
@@ -11,6 +12,8 @@
     <label class="text-gray-700 text-sm">パスワード</label>
 </div>
 
-<div>
-    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none focus:ring-2 ring-slate-200 mb-6" type="password" name="password">
+<div class="mb-6">
+    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none  {% if errArr.password | length > 0 %} ring-2 ring-red-400 {% else %} focus:ring-2 ring-slate-200 {% endif %} " type="password" name="password" {% if dataArr.password | length > 0 %} value="{{ dataArr.password }}"{% endif %}>
+    <p class="text-red-500">{{ errArr.password }}</p>
+
 </div>
