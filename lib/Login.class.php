@@ -26,6 +26,8 @@ class Login
 
         $accountInfo = $this->db->select($table, $column, $where, $arrVal);
         try{
+            var_dump($accountInfo);
+            var_dump($password);
             if(count($accountInfo) === 0){
                throw new Exception('メールアドレスまたはパスワードが間違っています。');
             }
