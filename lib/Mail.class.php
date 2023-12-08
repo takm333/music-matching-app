@@ -8,17 +8,9 @@ require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 
 class Mail{
 
-    public function sendMail($type, $mail_address, $param = '')
+    public static function sendMail($to, $subject, $message = '')
     {
-        switch($type){
-            case 'regist':
-                $to = $mail_address;
-                $subject = 'test';
-                $message = $param;
-                $headers = 'From: '. Bootstrap::FROM_MAIL_ADDRESS . "\r\n";
-
-                $res = mb_send_mail($to, $subject, $message, $headers);
-                break;
-        }
+        $headers = 'From: '. Bootstrap::FROM_MAIL_ADDRESS . "\r\n";
+        mb_send_mail($to, $subject, $message, $headers);
     }
 }

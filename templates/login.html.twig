@@ -1,0 +1,38 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>ログイン</title>
+</head>
+<body>
+    <div class="container mx-auto max-w-[600px]">
+        <div class="mx-auto px-8 mt-10">
+
+            <img class="object-contain w-full"src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}img/logo.png" alt="">
+
+            <div class="items-center mt-8">
+                <h2 class="font-bold mb-4 text-xl">ログイン</h2>
+
+                <div>
+                    <button class="bg-blue-800 hover:bg-blue-700 text-white {{constant('music_matching_app\\master\\initMaster::BUTTON_MODEL')}} " disabled="disabled">FaceBook でログイン</button>
+                </div>
+
+                <div>
+                    <button class="bg-sky-400 hover:bg-sky-300 text-white  {{constant('music_matching_app\\master\\initMaster::BUTTON_MODEL')}} "disabled="disabled">Twitter でログイン</button>
+                </div>
+
+                <div>
+                    <button onclick="location.href='{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}loginEmail.php'" class="bg-gray-800 hover:bg-gray-700 text-white  {{constant('music_matching_app\\master\\initMaster::BUTTON_MODEL')}} ">メールアドレスでログイン</button>
+                </div>
+
+                <p class="text-gray-700 text-sm mb-10">アカウントをお持ちでない場合は新規作成してください。</p>
+
+                <div>
+                    <button onclick="location.href='{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}accountCreate.php'" class="border border-gray-900 text-gray-800 hover:text-gray-500  {{constant('music_matching_app\\master\\initMaster::BUTTON_MODEL')}} ">アカウントを作る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
