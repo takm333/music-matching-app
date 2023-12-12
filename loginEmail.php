@@ -19,6 +19,7 @@ $twig = new \Twig\Environment($loader,[
     'cache' => Bootstrap::CACHE_DIR
 ]);
 $ses->checkSession();
+
 if(isset($_SESSION['member_id'])){
     header('Location: ' . Bootstrap::ENTRY_URL . 'eventlist.php');
 }

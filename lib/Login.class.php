@@ -26,8 +26,6 @@ class Login
 
         $accountInfo = $this->db->select($table, $column, $where, $arrVal);
         try{
-            var_dump($accountInfo);
-            var_dump($password);
             if(count($accountInfo) === 0){
                throw new Exception('メールアドレスまたはパスワードが間違っています。');
             }
@@ -36,9 +34,13 @@ class Login
             }
 
             $key = 'member_id';
-            $member_id = $accountInfo[0]['member_id'];
+            $login_member_id = $accountInfo[0]['member_id'];
+
             $ses = new SessionManager($this->db);
-            $ses->set($key, $member_id);
+            session_regenerate_id(TRUE);
+            $ses->session_id = session_id();
+            $ses->set($key, $login_member_id);
+            $ses->insertSession($login_member_id);
             header('Location: ' . Bootstrap::ENTRY_URL . 'eventlist.php');
             exit();
         }catch(Exception $e){

@@ -117,7 +117,7 @@ class PDODatabase{
     public function setJoins($joinArr){
         if($joinArr !== []){
             $join = '';
-            foreach($joinArr as $row){
+            foreach($joinArr as $key => $row){
                 $join .= $row['join_type'] . $row['join'] . ' ON ' . $row['on'];
             }
             $this->join = $join;
@@ -190,7 +190,7 @@ class PDODatabase{
         $arrPreSt = [];
 
         foreach($insData as $col => $val){
-            $arrPreSt[] = $col . ' =? ';
+            $arrPreSt[] = $col . ' = ? ';
         }
         $preSt = implode(',', $arrPreSt);
 
@@ -201,10 +201,12 @@ class PDODatabase{
              . ' WHERE '
              . $where;
 
+
         $updateData = array_merge(array_values($insData),$arrWhereVal);
         $this->sqlLogInfo($sql,$updateData);
 
         $stmt = $this->dbh->prepare($sql);
+        var_dump($stmt);
         $res = $stmt->execute($updateData);
 
         if($res === false){
