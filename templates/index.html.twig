@@ -1,0 +1,77 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <title>メールアドレスでログイン</title>
+</head>
+<body>
+    <div class="container mx-auto max-w-[600px]">
+        <div class="mx-auto px-8 mt-10">
+
+            <div class="flex justify-center">
+                    <img src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}/img/logo_top.png" alt="">
+            </div>
+
+            <div class="items-center mt-8">
+                <form action="">
+                    <div>
+                        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500   focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700    dark:border-gray-600 dark:placeholder-gray-400  dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" type="text" name="SearchBox" placeholder="イベント名、アーティスト名、会場名で検索ができます。">
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="w-1/2">
+                            <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-4 p-2.5 dark:bg-gray-700   dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" name="Area">
+                                <option value="">地域</option>
+                                {% for area in areaArr %}
+                                    <option value="{{area.area_id}}">{{area.area}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="w-1/2">
+                            <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-4 px-5 p-2.5 text-center inline-flex items-center dark:bg-gray-700  dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" type="button">ジャンル
+                                <svg class="w-2.5 h-2.5 ms-auto" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                </svg>
+                            </button>
+
+                            <div id="dropdown" class=" z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-auto dark:bg-gray-700">
+                                <ul class=" py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                                    <li>
+                                        <input type="checkbox" name="Genre[]" value="0" id="0">
+                                        <label for="0">全て</label>
+                                    </li>
+                                    {% for genre in genreArr %}
+                                        <li>
+                                        <input type="checkbox" name="Genre[]" value="{{genre.genre_id}}" id="{{genre.genre_id}}">
+                                        <label for="{{genre.genre_id}}">{{genre.genre}}</label>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <input type="date" name="Between[]">
+                        <input type="date" name="Between[]">
+                    </div>
+
+                    <div>
+                        <button type="submit" name="display" value="">通常</button>
+                        <button type="submit" name="display" value="new">新規</button>
+                        <button type="submit" name="display" value="my_favorite">お気に入り</button>
+                    </div>
+
+                    <div>
+                        {% for row in res %}
+                            {{row.title}} {{row.event_date}} {{row.area}} {{row.venue}} <br>
+                        {% endfor %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+</body>
+</html>

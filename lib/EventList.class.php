@@ -65,7 +65,7 @@ class EventList{
         }
 
         if($searchArr !== []){
-            $this->searchEvent($searchArr, $member_id);
+            $this->setCondition($searchArr, $member_id);
         }else{
             $this->joinArr []= $this->areasArr;
             $this->db->setJoins($this->joinArr);
@@ -75,7 +75,6 @@ class EventList{
         $this->db->setOrder($order);
 
         $res = $this->db->select($this->table, $this->column, $this->where, $this->arrVal);
-        var_dump($res);
         return $res;
     }
 
@@ -86,7 +85,7 @@ class EventList{
         }
 
         if($searchArr !== []){
-            $this->searchEvent($searchArr, $member_id);
+            $this->setCondition($searchArr, $member_id);
         }else{
             $this->joinArr []= $this->areasArr;
             $this->db->setJoins($this->joinArr);
@@ -96,7 +95,6 @@ class EventList{
         $this->db->setOrder($order);
 
         $res = $this->db->select($this->table, $this->column, $this->where, $this->arrVal);
-        var_dump($res);
         return $res;
     }
 
@@ -107,7 +105,7 @@ class EventList{
         }
 
         if($searchArr !== []){
-            $this->searchEvent($searchArr, $member_id);
+            $this->setCondition($searchArr, $member_id);
         }else{
             $this->joinArr []= $this->areasArr;
             $this->db->setJoins($this->joinArr);
@@ -116,21 +114,19 @@ class EventList{
         $this->db->setOrder($order);
 
         $res = $this->db->select($this->table, $this->column, $this->where, $this->arrVal);
-        var_dump($res);
         return $res;
     }
-    public function searchEvent($searchArr, $member_id = '')
+
+    public function setCondition($searchArr, $member_id = '')
     {
-        if($member_id !== ''){
-            $this->getOnlyFavoriteEvent($member_id);
-        }
         $this->createWhere($searchArr);
-        array_push($this->joinArr, $this->artistsArr, $this->genresArr, $this->areasArr, $this->favoriteArr);
+        array_push($this->joinArr, $this->artistsArr, $this->genresArr, $this->areasArr);
+        if($member_id === ''){
+            array_push($this->joinArr, $this->favoriteArr);
+        }
         $this->db->setJoins($this->joinArr);
         $groupby = 'events.event_id';
         $this->db->setGroupBy($groupby);
-        $res = $this->db->select($this->table, $this->column, $this->where, $this->arrVal);
-
     }
 
     private function getFavoriteColumn($member_id)
@@ -144,6 +140,7 @@ class EventList{
 
     private function getOnlyFavoriteEvent($member_id)
     {
+        $this->column .= ', user_favorites_table.is_favorite';
         $this->arrVal = [$member_id];
         $this->where = ' user_favorites_table.is_favorite = 1 and user_favorites_table.member_id = ? ';
         array_push($this->joinArr, $this->onlyFavoriteArr);
