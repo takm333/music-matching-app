@@ -4,9 +4,11 @@ namespace music_matching_app\lib;
 
 require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 
-class EventList{
+class Event{
 
     private $db = null;
+    private $from = '0000-00-00 00:00:00';
+    private $to = '9999-12-31 23:59:59';
     private $table = '';
     private $column = '';
     private $where = '';
@@ -17,12 +19,15 @@ class EventList{
     private $onlyFavoriteArr = [];
     private $artistsArr = [];
     private $genresArr = [];
+    private $eventGenresArr = [];
+    private $priceArr = [];
+    private $dowArr = ['日', '月', '火', '水', '木', '金', '土'];
 
     public function __construct($db)
     {
         $this->db = $db;
         $this->table = 'events';
-        $this->column = 'title, event_date, areas_table.area, venue';
+        $this->column = 'events.event_id, title, image, open_time, areas_table.area, venue';
         $this->where = '';
         $this->arrVal = [];
 
@@ -52,16 +57,29 @@ class EventList{
 
         $this->genresArr = [
             'join_type' => ' JOIN ',
+            'join' => 'genres as genres_table',
+            'on' => 'event_genres_table.genre_id = genres_table.genre_id'
+        ];
+
+        $this->eventGenresArr = [
+            'join_type' => ' JOIN ',
             'join' => 'event_genres as event_genres_table',
             'on' => 'events.event_id = event_genres_table.event_id'
         ];
 
+        $this->priceArr = [
+            'join_type' => ' JOIN ',
+            'join' => 'event_prices as event_prices_table',
+            'on' => 'events.event_id = event_prices_table.event_id'
+        ];
+
     }
 
-    public function displayRecentEvent($member_id, $searchArr = [])
+    //初期表示、直近のライブ
+    public function displayRecentEventList($member_id, $searchArr = [])
     {
         if($member_id !== ''){
-            $this->getFavoriteColumn($member_id);
+            $this->setFavoriteColumn($member_id);
         }
 
         if($searchArr !== []){
@@ -71,17 +89,18 @@ class EventList{
             $this->db->setJoins($this->joinArr);
         }
 
-        $order = 'event_date asc';
+        $order = 'open_time asc';
         $this->db->setOrder($order);
 
         $res = $this->db->select($this->table, $this->column, $this->where, $this->arrVal);
         return $res;
     }
 
-    public function displayNewEvent($member_id, $searchArr = [])
+    //新着のライブ
+    public function displayNewEventList($member_id, $searchArr = [])
     {
         if($member_id !== ''){
-            $this->getFavoriteColumn($member_id);
+            $this->setFavoriteColumn($member_id);
         }
 
         if($searchArr !== []){
@@ -98,10 +117,11 @@ class EventList{
         return $res;
     }
 
-    public function displayFavoriteEvent($member_id, $searchArr = [])
+    //お気に入り
+    public function displayFavoriteEventList($member_id, $searchArr = [])
     {
         if($member_id !== ''){
-            $this->getOnlyFavoriteEvent($member_id);
+            $this->setOnlyFavoriteColumn($member_id);
         }
 
         if($searchArr !== []){
@@ -110,17 +130,53 @@ class EventList{
             $this->joinArr []= $this->areasArr;
             $this->db->setJoins($this->joinArr);
         }
-        $order = 'event_date asc';
+        $order = 'open_time asc';
         $this->db->setOrder($order);
 
         $res = $this->db->select($this->table, $this->column, $this->where, $this->arrVal);
         return $res;
     }
 
-    public function setCondition($searchArr, $member_id = '')
+    //イベント詳細
+    public function displayDetailEvent($event_id, $member_id = '')
+    {
+        if($member_id !== ''){
+            $this->setFavoriteColumn($member_id);
+        }
+
+        $this->setEventDetailColumn($event_id);
+        $this->db->setJoins($this->joinArr);
+
+        $res = $this->db->select($this->table, $this->column, $this->where, $this->arrVal);
+
+        $eventDetail = $this->formatEventDetail($res);
+        return $eventDetail;
+    }
+
+
+    //ログイン時お気に入り状況取得
+    private function setFavoriteColumn($member_id)
+    {
+        $this->column .= ', user_favorites_table.is_favorite';
+        $this->arrVal = [$member_id];
+        $this->where = '( user_favorites_table.member_id IS NULL OR user_favorites_table.member_id = ? ) AND events.deleted_at IS null';
+        array_push($this->joinArr, $this->favoriteArr);
+    }
+
+    //お気に入りのみ取得
+    private function setOnlyFavoriteColumn($member_id)
+    {
+        $this->column .= ', user_favorites_table.is_favorite';
+        $this->arrVal = [$member_id];
+        $this->where = ' user_favorites_table.is_favorite = 1 and user_favorites_table.member_id = ? ';
+        array_push($this->joinArr, $this->onlyFavoriteArr);
+    }
+
+    //検索条件指定
+    private function setCondition($searchArr, $member_id = '')
     {
         $this->createWhere($searchArr);
-        array_push($this->joinArr, $this->artistsArr, $this->genresArr, $this->areasArr);
+        array_push($this->joinArr, $this->artistsArr, $this->eventGenresArr, $this->areasArr);
         if($member_id === ''){
             array_push($this->joinArr, $this->favoriteArr);
         }
@@ -129,23 +185,46 @@ class EventList{
         $this->db->setGroupBy($groupby);
     }
 
-    private function getFavoriteColumn($member_id)
+    //イベント詳細
+    private function setEventDetailColumn($event_id)
     {
-        //ログインしている場合、お気に入り状況を表示
-        $this->column .= ', user_favorites_table.is_favorite';
-        $this->arrVal = [$member_id];
-        $this->where = '( user_favorites_table.member_id IS NULL OR user_favorites_table.member_id = ? ) AND events.deleted_at IS null';
-        array_push($this->joinArr, $this->favoriteArr);
+        $this->setAnd();
+
+        $this->column .= ', start_time, link, event_prices_table.ticket_name,event_prices_table.price, event_artists_table.artist_name, genres_table.genre';
+        $this->arrVal []= $event_id;
+        $this->where .= ' events.event_id = ? ';
+        array_push($this->joinArr, $this->artistsArr, $this->eventGenresArr,$this->genresArr,  $this->areasArr, $this->priceArr);
     }
 
-    private function getOnlyFavoriteEvent($member_id)
+    private function formatEventDetail($res)
     {
-        $this->column .= ', user_favorites_table.is_favorite';
-        $this->arrVal = [$member_id];
-        $this->where = ' user_favorites_table.is_favorite = 1 and user_favorites_table.member_id = ? ';
-        array_push($this->joinArr, $this->onlyFavoriteArr);
-    }
+        $eventDetail = $res[0];
+        $eventDetail['event_date'] = date('Y/n/d', strtotime($eventDetail['open_time']));
+        $eventDetail['event_date_ja'] = date('Y年n月d日', strtotime($eventDetail['open_time']));
+        $eventDetail['dow'] = $this->dowArr[date('w', strtotime($eventDetail['open_time']))];
+        $eventDetail['open_time'] = date('G:i', strtotime($eventDetail['open_time']));
+        $eventDetail['start_time'] = date('G:i', strtotime($eventDetail['start_time']));
+        $eventDetail['ticket_name'] = [];
+        $eventDetail['price'] = [];
+        $eventDetail['artist_name'] =  [];
+        $eventDetail['genre'] =  [];
 
+        foreach($res as $row){
+            if(!in_array($row['ticket_name'], $eventDetail['ticket_name'])){
+                $eventDetail['ticket_name'] []= $row['ticket_name'];
+            }
+            if(!in_array($row['price'], $eventDetail['price'])){
+                $eventDetail['price'] []= $row['price'];
+            }
+            if(!in_array($row['artist_name'], $eventDetail['artist_name'])){
+                $eventDetail['artist_name'] []= $row['artist_name'];
+            }
+            if(!in_array($row['genre'], $eventDetail['genre'])){
+                $eventDetail['genre'] []= $row['genre'];
+            }
+        }
+        return $eventDetail;
+    }
 
     private function createWhere($searchArr)
     {
@@ -153,31 +232,31 @@ class EventList{
             if($val !== ""){
                 //name属性から関数名を作って実行
                 $createCondition = 'create' . $col;
-                if($this->where !== ''){
-                    $this->where .= ' AND ';
-                }
                 $this->$createCondition($val);
             }
         }
+        $this->createBetween($this->from, $this->to);
     }
 
     private function createSearchBox($val)
     {
+        $this->setAnd();
+
         $searchBox = '(title LIKE ? OR event_artists_table.artist_name LIKE ? OR venue LIKE ? ) ';
         $preCnt = mb_substr_count($searchBox, '?');
 
-        var_dump($val);
         $this->where .= $searchBox;
         $i = 0;
         while($i < $preCnt){
             $this->arrVal []= '%' . $val . '%';
             $i++;
         }
-        var_dump($this->arrVal);
     }
 
     private function createArea($val)
     {
+        $this->setAnd();
+
         $area = '(events.area_id = ? ) ';
 
         $this->where .= $area;
@@ -187,6 +266,8 @@ class EventList{
     private function createGenre($val)
     {
         if($val[0] !== '0'){
+            $this->setAnd();
+
             $genre = '( event_genres_table.genre_id';
             $this->where .= $genre;
 
@@ -208,13 +289,31 @@ class EventList{
         }
     }
 
-    private function createBetween($val)
+    private function createFrom($val)
     {
-        $from = ($val[0] !== '') ? date('Y-m-d H:i:s', strtotime($val[0])) : '0000-00-00 00:00:00';
-        $to = ($val[1] !== '') ? date('Y-m-d H:i:s', strtotime($val[1] . ' 23:59:59')) : '9999-12-31 23:59:59';
+        $this->from =  date('Y-m-d H:i:s', strtotime($val));
+    }
 
-        $between = 'events.event_date BETWEEN ? AND ? ';
+    private function createTo($val)
+    {
+        $this->to = date('Y-m-d H:i:s', strtotime($val . ' 23:59:59'));
+    }
+
+    private function createBetween($from, $to)
+    {
+
+        $this->setAnd();
+
+        $between = 'events.open_time BETWEEN ? AND ? ';
         $this->where .= $between;
         array_push($this->arrVal, $from, $to);
     }
+
+    private function setAnd()
+    {
+        if($this->where !== ''){
+            $this->where .= ' AND ';
+        }
+    }
+
 }

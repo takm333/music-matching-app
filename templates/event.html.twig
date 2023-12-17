@@ -1,0 +1,118 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://use.fontawesome.com/releases/v6.2.0/css/all.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+
+    <title>メールアドレスでログイン</title>
+</head>
+<body class="overflow-scroll">
+    <div class="container mx-auto max-w-[600px]">
+        <div class="mx-auto px-8 mt-10">
+            <div class="items-center mt-8">
+                <div class="font-bold text-3xl">
+                    {{eventDetail.title}}
+                </div>
+                <div class="mt-8">
+                    <img class="object-contain w-full rounded" src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}event_img/{{eventDetail.image}}" alt="">
+                </div>
+                <div class="mt-4 p-4 w-full border border-gray-200 text-gray-900 rounded rounded-lg">
+                    <div>
+                        日付: {{eventDetail.event_date_ja}}
+                    </div>
+                    <div class="pt-2">
+                        時間: 開場 {{eventDetail.open_time}} 開演 {{eventDetail.start_time}}
+                    </div>
+
+                    <div class="pt-2">
+                        {{eventDetail.area}} {{eventDetail.venue}}<br>
+                        <a class="text-sky-500" href="https://www.google.com/maps?q={{eventDetail.venue}}" target="_blank" rel="noopener noreferrer">地図を見る</a>
+                    </div>
+                    <div class="pt-2">
+                        <p>ウェブサイト</p>
+                        <a class="text-sky-500" href="{{eventDetail.link}}" target="_blank" rel="noopener noreferrer">{{eventDetail.link}}</a>
+                    </div>
+                    <div class="flex pt-4 text-xs text-slate-400">
+                        {% for genre in eventDetail.genre %}
+                            <div class="mx-1 px-2 bg-gray-100">
+                                {{genre}}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="mt-6 flex gap-2">
+                    <div class="w-full">
+                        <button class="py-3 w-full bg-gray-800 hover:bg-gray-700 rounded text-white font-bold">参加する</button>
+                    </div>
+                    <div class="mt-2 text-[32px] ">
+                        {% if eventDetail.is_login %}
+                        {% set favorite = 1 %}
+                            {% if eventDetail.is_favorite == favorite %}
+                                <a  href="http://google.com"> <i class="fa-solid fa-heart w-full" style="color: #ff388e;"><span class="px-2 font-sans">0</span></i></i>
+                            {% else %}
+                                <a  href="http://google.com"> <i class="fa-regular fa-heart w-full" style="color: #d6d6d6;" ></i></a>
+                            {% endif %}
+                        {% else %}
+                            <i class="fa-regular fa-heart w-full" style="color: #d6d6d6;" ></i>
+                        {% endif %}
+                    </div>
+                </div>
+                <hr class="h-px mt-8 bg-gray-200 border-0 dark:bg-gray-700">
+
+                <div class="mt-2 w-full text-gray-900 rounded rounded-lg">
+                    <div class="font-bold">
+                        {{eventDetail.title}}
+                    </div>
+                    <div class="mt-4 pt-2">
+                        <div class="font-medium">日時</div>
+                        <p>{{eventDetail.event_date}} ({{eventDetail.dow}})</p>
+                        <p>OPEN {{eventDetail.open_time}} START {{eventDetail.start_time}}</p>
+                    </div>
+                    <div class="pt-2">
+                        <div class="font-medium">場所</div>
+                        <p>{{eventDetail.venue}}</p>
+                    </div>
+                    <div class="pt-2">
+                        <div class="font-medium">料金</div>
+                        <div class="flex">
+                            <div>
+                                {% for ticket_name in eventDetail.ticket_name %}
+                                    <p>{{ticket_name}}</p>
+                                {% endfor %}
+                            </div>
+                            &nbsp;
+                            <div>
+                                {% for price in eventDetail.price %}
+                                    <p>&yen;{{price}}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <div class="font-medium">出演</div>
+                        {% for artist_name in eventDetail.artist_name %}
+                            {{artist_name}}{% if loop.last == false %} /{% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="pt-2">
+                        <div class="font-medium">チケット情報、注意事項、お問い合わせ</div>
+                        <a class="text-sky-500" href="{{eventDetail.link}}" target="_blank" rel="noopener noreferrer">{{eventDetail.link}}</a>
+                    </div>
+                </div>
+
+                <div class="mt-2 w-full text-gray-900 rounded rounded-lg">
+                    <div class="mt-4 pt-2">
+                        <div class="text-sm">ほかのライブを見る</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/datepicker.min.js"></script>
+</body>
+</html>
