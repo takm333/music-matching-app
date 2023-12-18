@@ -8,6 +8,7 @@ use music_matching_app\lib\PDODatabase;
 use music_matching_app\lib\SessionManager;
 use music_matching_app\lib\Event;
 use music_matching_app\lib\initMaster;
+use music_matching_app\lib\Favorite;
 
 $db = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS, Bootstrap::DB_NAME, Bootstrap::DB_TYPE);
 $ses = new SessionManager($db);
@@ -22,6 +23,7 @@ $init = new initMaster($db);
 [$genreArr, $areaArr] = $init->initEventList();
 
 $member_id = isset($_SESSION['member_id']) ? $_SESSION['member_id'] : '';
+
 $event = new Event($db);
 $searchArr = (isset($_GET)) ? $_GET : [];
 $searchGenreArr = [];
@@ -42,6 +44,7 @@ if(isset($_GET['display'])){
     $res = $event->displayRecentEventList($member_id, $searchArr);
 }
 if(isset($searchArr['Genre'])) $searchGenreArr = $searchArr['Genre'];
+
 $context = [];
 $context['searchArr'] = $searchArr;
 $context['searchGenreArr'] = $searchGenreArr;
@@ -50,5 +53,3 @@ $context['areaArr'] = $areaArr;
 $context['display'] = $display;
 $context['res'] = $res;
 echo $twig->render('index.html.twig',$context);
-
-?>

@@ -40,7 +40,7 @@ class Event{
         $this->favoriteArr = [
             'join_type' => ' LEFT JOIN ',
             'join' => 'user_favorites as user_favorites_table',
-            'on' => 'events.event_id = user_favorites_table.event_id'
+            'on' => 'events.event_id = user_favorites_table.event_id AND user_favorites_table.member_id = ?'
         ];
 
         $this->onlyFavoriteArr = [
@@ -159,7 +159,7 @@ class Event{
     {
         $this->column .= ', user_favorites_table.is_favorite';
         $this->arrVal = [$member_id];
-        $this->where = '( user_favorites_table.member_id IS NULL OR user_favorites_table.member_id = ? ) AND events.deleted_at IS null';
+        $this->where = 'events.deleted_at IS null';
         array_push($this->joinArr, $this->favoriteArr);
     }
 

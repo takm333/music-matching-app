@@ -206,7 +206,6 @@ class PDODatabase{
         $this->sqlLogInfo($sql,$updateData);
 
         $stmt = $this->dbh->prepare($sql);
-        var_dump($stmt);
         $res = $stmt->execute($updateData);
 
         if($res === false){

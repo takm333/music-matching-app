@@ -4,14 +4,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://use.fontawesome.com/releases/v6.2.0/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome-animation/0.2.1/font-awesome-animation.css" type="text/css" media="all" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}js/favorite.js"></script>
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-
-    <title>メールアドレスでログイン</title>
+    <title>{{eventDetail.title}}</title>
 </head>
 <body class="overflow-scroll">
     <div class="container mx-auto max-w-[600px]">
-        <div class="mx-auto px-8 mt-10">
-            <div class="items-center mt-8">
+        <div class="mx-auto px-8 pt-4 text-[20px]">
+            <a  href="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}eventlist.php"><i class="fa-solid fa-arrow-left" style="color: #d6d6d6;"></i></a>
+        </div>
+        <div class="mx-auto px-8">
+            <div class="items-center mt-4">
                 <div class="font-bold text-3xl">
                     {{eventDetail.title}}
                 </div>
@@ -47,17 +52,32 @@
                     <div class="w-full">
                         <button class="py-3 w-full bg-gray-800 hover:bg-gray-700 rounded text-white font-bold">参加する</button>
                     </div>
-                    <div class="mt-2 text-[32px] ">
-                        {% if eventDetail.is_login %}
-                        {% set favorite = 1 %}
-                            {% if eventDetail.is_favorite == favorite %}
-                                <a  href="http://google.com"> <i class="fa-solid fa-heart w-full" style="color: #ff388e;"><span class="px-2 font-sans">0</span></i></i>
+                    <div class="text-[32px]">
+                        {% if is_login %}
+                            <input type="hidden" name="entry_url" id="entry_url" value="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}">
+                            <input type="hidden" name="event_id" id="event_id" value="{{eventDetail.event_id}}">
+                            {% set favorite = 1 %}
+                            {% if is_favorite == favorite %}
+                                <div class="flex w-full">
+                                    <button id="favorite_button"><i id="favorite_icon" class="fa-solid fa-heart faa-pulse animated-hover" style="color: #ff388e;">
+                                    </i></button>
+                                    <p class="font-sans px-2" id="favorites">{% if favorites > 0 %}{{favorites}}{% else %}&nbsp;{% endif %}</p>
+                                </div>
                             {% else %}
-                                <a  href="http://google.com"> <i class="fa-regular fa-heart w-full" style="color: #d6d6d6;" ></i></a>
+                                <div class="flex w-full">
+                                    <button id="favorite_button"><i id="favorite_icon" class="fa-regular fa-heart faa-pulse animated-hover" style="color: #d6d6d6;">
+                                    </i></button>
+                                    <p class="font-sans px-2" id="favorites">{% if favorites > 0 %}{{favorites}}{% else %}&nbsp;{% endif %}</p>
+                                </div>
                             {% endif %}
                         {% else %}
-                            <i class="fa-regular fa-heart w-full" style="color: #d6d6d6;" ></i>
+                            <div class="flex">
+                                <button id="favorite_button"><i id="favorite_icon" class="fa-regular fa-heart" style="color: #d6d6d6;">
+                                </i></button>
+                                <p class="font-sans px-2" id="favorites">{% if favorites > 0 %}{{favorites}}{% else %}&nbsp;{% endif %}</p>
+                            </div>
                         {% endif %}
+
                     </div>
                 </div>
                 <hr class="h-px mt-8 bg-gray-200 border-0 dark:bg-gray-700">

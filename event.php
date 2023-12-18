@@ -7,6 +7,7 @@ require_once dirname(__FILE__) . '/Bootstrap.class.php';
 use music_matching_app\lib\PDODatabase;
 use music_matching_app\lib\SessionManager;
 use music_matching_app\lib\Event;
+use music_matching_app\lib\Favorite;
 
 $db = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS, Bootstrap::DB_NAME, Bootstrap::DB_TYPE);
 $ses = new SessionManager($db);
@@ -25,11 +26,17 @@ if(isset($_GET['event_id']) && $_GET['event_id'] !== ''){
     header('Location: ' . Bootstrap::ENTRY_URL . 'eventlist.php');
     exit();
 }
+
+$favorite = new Favorite($db);
+$favorites = $favorite->countFavorite($event_id);
+$is_favorite = $favorite->checkUserFavorite($member_id, $event_id);
+
 $event = new Event($db);
 $eventDetail = $event->displayDetailEvent($event_id, $member_id);
 
 $context = [];
 $context['eventDetail'] = $eventDetail;
 $context['is_login'] = $is_login;
-var_dump($context);
+$context['favorites'] = $favorites;
+$context['is_favorite'] = $is_favorite;
 echo $twig->render('event.html.twig',$context);

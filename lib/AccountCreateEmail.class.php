@@ -54,4 +54,34 @@ class AccountCreateEmail{
 
         return $url;
     }
+
+    public function registAccount($accountInfo)
+    {
+        //本会員登録
+        $mail_address = $accountInfo['mail_address'];
+        $password_hash = $accountInfo['password_hash'];
+
+        $table = 'authentication';
+        $insData = [
+            'mail_address' => $mail_address,
+            'password_hash' => $password_hash
+        ];
+
+        $res = $this->db->insert($table, $insData);
+        $member_id = $this->db->getLastId();
+        echo '登録完了!';
+
+        //preテーブルの'is_registered'を1にする
+        //登録済みとする
+        $url_token = $accountInfo['url_token'];
+        $table = 'pre_users';
+        $where = ' url_token = ? ';
+        $insData = [
+            'is_registered' => 1
+        ];
+        $arrWhereVal = [$url_token];
+
+        $res = $this->db->update($table, $where, $insData, $arrWhereVal);
+        return $member_id;
+    }
 }
