@@ -17,26 +17,17 @@ class AccountCreateEmail{
     }
 
     public function registPreAccount($mail_address,$password){
-        if($this->accountExists($mail_address)){
-            //登録済み
-        }else{
-            //未登録
-            $url = $this->createPreAccount($mail_address, $password, $this->db);
+        //未登録
+        $url = $this->createPreAccount($mail_address, $password, $this->db);
+        $textUrl = Bootstrap::REGIST_EMAIL_TEXT_URL;
+        $textNote = Bootstrap::REGIST_EMAIL_TEXT_NOTE;
+        $text = $textUrl . $url . PHP_EOL .  $textNote;
+        $subject = Bootstrap::REGIST_EMAIL_SUBJECT;
+        $res = Mail::sendMail($mail_address, $subject, $text);
 
-            $subject = 'test';
-            Mail::sendMail($mail_address, $subject, $url);
-        }
+        return $res;
     }
 
-    private function accountExists($mail_address)
-    {
-        $table = 'authentication';
-        $where = ' mail_address = ? ';
-        $arrVal = [$mail_address];
-        $count = $this->db->count($table, $where, $arrVal);
-
-        return boolval($count);
-    }
 
     private function createPreAccount($mail_address, $password, $db){
         $password_hash = password_hash($password, PASSWORD_DEFAULT);

@@ -27,15 +27,13 @@ if(isset($_SESSION['member_id'])){
 if(isset($_POST['mail_address']) && isset($_POST['password'])){
     $dataArr = $_POST;
 
-    var_dump($dataArr);
-    $validator = new UserValidator;
+    $validator = new UserValidator($db);
     $errArr = $validator->checkError($dataArr);
-    var_dump($errArr);
     $errFlg = $validator->getErrFlg();
-    var_dump($errFlg);
     if($errFlg){
         $login = new Login($db);
-        $login->loginEmail($_POST['mail_address'], $_POST['password']);
+        $errArr['mail_address'] = $login->loginEmail($_POST['mail_address'], $_POST['password']);
+        $errArr['password'] = ' ';
     }
 }
 

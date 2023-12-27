@@ -2,11 +2,11 @@
 
 namespace music_matching_app\lib;
 
+require_once dirname(__FILE__) . '/../Bootstrap.class.php';
+
 use Exception;
 use music_matching_app\Bootstrap;
 use music_matching_app\lib\SessionManager;
-
-require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 
 class Login
 {
@@ -26,7 +26,7 @@ class Login
             header('Location: ' . Bootstrap::ENTRY_URL . 'eventlist.php');
             exit();
         }catch(Exception $e){
-            echo $e->getMessage();
+            return $e->getMessage();
         }
     }
 

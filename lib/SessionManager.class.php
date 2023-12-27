@@ -62,6 +62,9 @@ class SessionManager
         $col = ' member_id ';
         $where = ' session_id = ? AND deleted_at IS NULL';
         $arrVal = [$this->session_id];
+        $order = 'id desc';
+
+
 
         $res = $this->db->select($table, $col, $where, $arrVal);
         //var_dump($res);

@@ -34,3 +34,4 @@ if($member_id !== '' && $event_id !== ''){
 }else{
     echo 'no';
 }
+exit();

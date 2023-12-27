@@ -25,6 +25,28 @@ class initMaster{
         return $initArr;
     }
 
+    public function initProfileList()
+    {
+        $genderArr = $this->createGenderArr();
+        $ageArr = $this->createAgeArr();
+        $areaArr = $this->createAreaArr();
+        $genreArr = $this->createGenreArr();
+
+        $initArr = [
+            $genderArr,
+            $ageArr,
+            $areaArr,
+            $genreArr
+        ];
+        return $initArr;
+    }
+
+    public function initParticipantStatusList()
+    {
+        $statusArr = $this->createStatusArr();
+        return $statusArr;
+    }
+
     private function createGenreArr()
     {
         $table = 'genres';
@@ -40,4 +62,29 @@ class initMaster{
         $res = $this->db->select($table, $column);
         return $res;
     }
+
+    private function createStatusArr()
+    {
+        $table = 'participant_status';
+        $column = 'status_id, status';
+        $res = $this->db->select($table, $column);
+        return $res;
+    }
+
+    private function createGenderArr()
+    {
+        $table = 'genders';
+        $column = 'gender_id, gender';
+        $res = $this->db->select($table, $column);
+        return $res;
+    }
+
+    private function createAgeArr()
+    {
+        $table = 'ages';
+        $column = 'age_id, age';
+        $res = $this->db->select($table, $column);
+        return $res;
+    }
+
 }

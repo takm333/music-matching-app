@@ -1,4 +1,4 @@
-$(function() {
+$(document).ready(function() {
     $('#favorite_button').click(function(){
 
         let event_id = $('#event_id').val();
@@ -16,15 +16,13 @@ $(function() {
                 }
             },
             function(data){
-                alert("読み込み失敗");
             },
         );
 
         function pushFavorite(){
             $.ajax({
                 type : "get",
-                url : entry_url + "/favorite.php?event_id=" +
-            encodeURIComponent(event_id),
+                url : entry_url + "/favorite.php?event_id=" + encodeURIComponent(event_id),
             }).then(
                 function(data){
                     if(data === 'no' || data === ''){

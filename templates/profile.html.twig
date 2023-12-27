@@ -1,0 +1,122 @@
+<div class="mt-4">
+    <div>
+        <label class="text-gray-700">アイコン:</label>
+    </div>
+    <div class="pt-2 object-contain h-20 w-20 ">
+        {% if display == ''%}
+            {% if myProfile.icon | length > 0 %}
+                <img src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}user_image/{{myProfile.icon}}" alt="">
+            {% else %}
+                <div class="p-8 bg-gray-100">
+                    <i class="fa-solid fa-camera"></i>
+                </div>
+            {% endif %}
+        {% else %}
+            a
+        {% endif %}
+    </div>
+</div>
+
+<div class="mt-8">
+    <div>
+        <label class="text-gray-700">ニックネーム:</label>
+    </div>
+    <div class="pt-2">
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none" type="text"   name="nickname" value="{{myProfile.nickname}}" {% if display == ''%}readonly{% endif %}>
+    </div>
+</div>
+
+<div class="mt-8">
+    <div>
+        <label class="text-gray-700">ユーザーID:</label>
+    </div>
+    <div class="pt-2">
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none" type="text"   name="user_id" value="{{myProfile.user_id}}" {% if display == ''%}readonly{% endif %}>
+    </div>
+</div>
+
+<div class="mt-8">
+    <div>
+        <label class="text-gray-700">自己紹介:</label>
+    </div>
+    <div class="pt-2">
+        <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none" name="self_introduction" rows="8" cols="40" {% if display == ''%}readonly{% endif %}>{{myProfile.self_introduction}}</textarea>
+    </div>
+</div>
+
+<div class="mt-8">
+    <div>
+        <label class="text-gray-700">ジャンル:</label>
+    </div>
+    <div class="pt-2">
+        {% if display == '' %}
+            <div class="flex shadow appearance-none border rounded w-full py-3 px-2 text-gray-700 leading-normal focus:outline-none">
+                <span id="checked_genre" class="flex flex-wrap">
+                {% for genre in myProfile.genre %}
+                    <div class="text-sm text-sky-500 mx-2 px-2 my-1 bg-gray-100">
+                    {{genre}}
+                    </div>
+                {% endfor %}
+                </span>
+            </div>
+        {% else %}
+            <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-4 px-5 p-2.5 text-center inline-flex items-center" type="button">
+                {# ここに選択したジャンルを書く #}
+                <span id="checked_genre" class="flex flex-wrap">ジャンルを選択してください</span>
+                <svg class="w-2.5 h-2.5 ms-auto" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                </svg>
+            </button>
+            <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-auto" data-popper-placement="bottom">
+                <ul class="text-sm text-gray-700 px-10" aria-labelledby="dropdownDefaultButton" >
+                    {% for genre in genreArr %}
+                    <li>
+                        <input type="checkbox" name="Genre[]" value="{{genre.genre_id}}" id="{{genre.genre_id}}" {% if genre.genre_id in searchGenreArr %} checked="checked" {% endif %}>
+                        <label for="{{genre.genre_id}}" id="test" value="a">{{genre.genre}}</label>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="mt-8">
+    <div>
+        <label class="text-gray-700">性別:</label>
+    </div>
+    <div class="pt-2">
+        {% for gender in genderArr %}
+            <div class="pt-2">
+                <label class="text-gray-700">{{gender.gender}}</label>
+                <input type="radio" name="gender[]" value="{{gender.gender_id}}" {% if gender.gender == myProfile.gender %} checked {% else %} {% if display == ''%}disabled{% endif %} {% endif %} >
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="mt-8">
+    <div>
+        <label class="text-gray-700">年代:</label>
+    </div>
+    <div class="pt-2">
+        <select class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-4 p-2.5" name="area" {% if display == '' %}disabled{% endif %}>
+            {% for age in ageArr %}
+                <option value="{{age.age_id}}" {% if age.age == myProfile.age %} selected {% endif %}>{{age.age}}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<div class="my-8">
+    <div>
+        <label class="text-gray-700">住んでる地域:</label>
+    </div>
+    <div class="pt-2">
+        <select class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-4 p-2.5" name="area" {% if display == '' %}disabled{% endif %}>
+            {% for area in areaArr %}
+                <option value="{{area.area_id}}" {% if area.area == myProfile.area %} selected {% endif %}>{{area.area}}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>

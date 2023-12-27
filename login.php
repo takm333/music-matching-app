@@ -18,6 +18,7 @@ $ses->selectSession();
 
 if(isset($_SESSION['member_id'])){
     header('Location: ' . Bootstrap::ENTRY_URL . 'eventlist.php');
+    exit();
 }
 
 $context = [];

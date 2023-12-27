@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome-animation/0.2.1/font-awesome-animation.css" type="text/css" media="all" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}js/favorite.js"></script>
+    <script src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}js/participation.js"></script>
+    <script src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}js/modal.js"></script>
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
     <title>{{eventDetail.title}}</title>
 </head>
@@ -49,9 +51,15 @@
                 </div>
 
                 <div class="mt-6 flex gap-2">
-                    <div class="w-full">
-                        <button class="py-3 w-full bg-gray-800 hover:bg-gray-700 rounded text-white font-bold">参加する</button>
+                    <div class="w-full" id="modal">
+                        <button data-modal-target="default-modal" data-modal-toggle="default-modal" id="modal_button" class="py-3 w-full bg-gray-800 hover:bg-gray-700 rounded text-white font-bold">{% if participationStatus != '' and participationStatus != 99 %}参加中{% else %}参加する{% endif %}</button>
+                        {% if is_login %}
+                            {% include 'eventParticipation.html.twig' %}
+                        {% else %}
+                            {% include 'notLogin.html.twig' %}
+                        {% endif %}
                     </div>
+
                     <div class="text-[32px]">
                         {% if is_login %}
                             <input type="hidden" name="entry_url" id="entry_url" value="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}">
@@ -72,7 +80,7 @@
                             {% endif %}
                         {% else %}
                             <div class="flex">
-                                <button id="favorite_button"><i id="favorite_icon" class="fa-regular fa-heart" style="color: #d6d6d6;">
+                                <button data-modal-target="default-modal" data-modal-toggle="default-modal"><i id="favorite_icon" class="fa-regular fa-heart" style="color: #d6d6d6;">
                                 </i></button>
                                 <p class="font-sans px-2" id="favorites">{% if favorites > 0 %}{{favorites}}{% else %}&nbsp;{% endif %}</p>
                             </div>
@@ -80,6 +88,16 @@
 
                     </div>
                 </div>
+
+
+                <div class="mt-6 flex gap-2" id="event_participants">
+                    {# {% if participantsArr | length > 0 %} #}
+                        <div class="w-full">
+                            {% include 'eventParticipants.html.twig' %}
+                        </div>
+                    {# {% endif %} #}
+                </div>
+
                 <hr class="h-px mt-8 bg-gray-200 border-0 dark:bg-gray-700">
 
                 <div class="mt-2 w-full text-gray-900 rounded rounded-lg">
@@ -123,9 +141,46 @@
                     </div>
                 </div>
 
+
                 <div class="mt-2 w-full text-gray-900 rounded rounded-lg">
-                    <div class="mt-4 pt-2">
-                        <div class="text-sm">ほかのライブを見る</div>
+                    <div class="mt-8 pt-2">
+                    <hr class="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700">
+                        <div class="text-sm">他のライブを見る:</div>
+                        {% for row in eventList %}
+                           <a href="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}event.php?event_id={{row.event_id}}">
+                               <div class="flex mt-4 py-2 px-4 w-full  border border-gray-200 hover:border-gray-400 text-gray-900 rounded text-sm  rounded-lg">
+                                  <div class="w-1/5">
+                                       <img class="object-contain h-20 w-20" src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}event_img/{{row.image}}" alt="">
+                                   </div>
+                                   <div class="w-4/5">
+                                       <div class="text-xs h-1/5">
+                                          <p>{{row.open_time}}</p>
+                                       </div>
+                                      <div class="font-medium text-lg h-3/5 py-2 flex item-center">
+                                           <p>{{row.title}}</p>
+                                       </div>
+                                      <div class="flex h-1/5">
+                                            <div class="w-1/5">
+                                             {{row.area}}
+                                            </div>
+                                            <div class="w-full flex">
+                                                <div>
+                                                {{row.venue}}
+                                                </div>
+                                            </div>
+                                        <div>
+                                            {% set favorite = 1 %}
+                                            {% if row.is_favorite == favorite %}
+                                                <i class="fa-solid fa-heart" style="color: #ff388e;"></i>
+                                            {% else %}
+                                                <i class="fa-regular fa-heart" style="color: #d6d6d6;"></i>
+                                            {% endif %}
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
                     </div>
                 </div>
 

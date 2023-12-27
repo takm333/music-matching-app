@@ -1,0 +1,142 @@
+<form method="post" enctype="multipart/form-data">
+    <div class="mt-4">
+        <div>
+            <label class="text-gray-700">アイコン:</label>
+        </div>
+        <div class="flex">
+            <div class="pt-2 object-contain h-20 w-20">
+                {% if myProfile.icon | length > 0 %}
+                    <img id="preview" src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}user_image/{{myProfile.icon}}" alt="">
+                {% else %}
+                    <img id="preview" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+                {% endif %}
+            </div>
+            <div class="my-auto px-4">
+                <label class="bg-gray-700 hover:bg-gray-800 p-3 text-white text-xs rounded">ファイルを選択
+                    <input type="file" name="image" id="image" onchange="previewImage(this);" class="hidden">
+                </label>
+            </div>
+        </div>
+        <p class="text-red-500">{{ errArr.image }}</p>
+    </div>
+
+    <div class="mt-8">
+        <div>
+            <label class="text-gray-700">ニックネーム:</label>
+        </div>
+        <div class="pt-2">
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none {% if errArr.nickname | length > 0 %} ring-2 ring-red-400 {% else %} focus:ring-2 ring-slate-200 {% endif %}" type="text" name="nickname" value="{% if dataArr.nickname | length > 0 %}{{dataArr.nickname}}{% else %}{{myProfile.nickname}}{% endif %}" {% if display == ''%}readonly{% endif %}>
+        </div>
+        <p class="text-red-500">{{ errArr.nickname }}</p>
+    </div>
+
+    <div class="mt-8">
+        <div>
+            <label class="text-gray-700">ユーザーID:</label>
+        </div>
+        <div class="pt-2">
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none {% if errArr.user_id | length > 0 %} ring-2 ring-red-400 {% else %} focus:ring-2 ring-slate-200 {% endif %}" type="text" name="user_id" value="{% if dataArr.user_id | length > 0 %}{{dataArr.user_id}}{% else %}{{myProfile.user_id}}{% endif %}" {% if display == ''%}readonly{% endif %}>
+        </div>
+        <p class="text-red-500">{{ errArr.user_id }}</p>
+    </div>
+
+    <div class="mt-8">
+        <div>
+            <label class="text-gray-700">自己紹介:</label>
+        </div>
+        <div class="pt-2">
+            <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-normal focus:outline-none {% if errArr.self_introduction | length > 0 %} ring-2 ring-red-400 {% else %} focus:ring-2 ring-slate-200 {% endif %}" name="self_introduction" rows="8" cols="40" {% if display == ''%}readonly{% endif %}>{% if dataArr.self_introduction | length > 0 %}{{dataArr.self_introduction}}{% else %}{{myProfile.self_introduction}}{% endif %}</textarea>
+        </div>
+        <p class="text-red-500">{{ errArr.self_introduction }}</p>
+    </div>
+
+    <div class="mt-8">
+        <div>
+            <label class="text-gray-700">ジャンル:</label>
+        </div>
+        <div class="pt-2">
+            {% if display == '' %}
+                <div class="flex shadow appearance-none border rounded w-full py-3 px-2 text-gray-700 leading-normal focus:outline-none">
+
+                </div>
+            {% else %}
+                <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-4 px-5 p-2.5 text-center inline-flex items-center  {% if errArr.nickname | length > 0 %} ring-2 ring-red-400 {% else %} focus:ring-2 ring-slate-200 {% endif %}" type="button">
+                    {% if myProfile.genre | length > 0  %}
+                        <span id="checked_genre" class="flex flex-wrap">
+                        {% for genre in myProfile.genre %}
+                            <div id="selected_genre" class="text-sm text-sky-500 mx-2 px-2 my-1 bg-gray-100">
+                            {{genre}}
+                            </div>
+                        {% endfor %}
+                        </span>
+                    {% else %}
+                    {# ここに選択したジャンルを書く #}
+                        <span id="checked_genre" class="flex flex-wrap">ジャンルを選択してください</span>
+                    {% endif %}
+                    <svg class="w-2.5 h-2.5 ms-auto" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                    </svg>
+                </button>
+                <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-auto" data-popper-placement="bottom">
+                    <ul class="text-sm text-gray-700 px-10" aria-labelledby="dropdownDefaultButton" >
+                        {% for genre in genreArr %}
+                        <li>
+                            <input type="checkbox" name="genre[]" value="{{genre.genre_id}}" id="{{genre.genre_id}}" {% if genre.genre in myProfile.genre %} checked {% endif %}>
+                            <label for="{{genre.genre_id}}">{{genre.genre}}</label>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+        <p class="text-red-500">{{ errArr.genre }}</p>
+    </div>
+
+    <div class="mt-8">
+        <div>
+            <label class="text-gray-700">性別:</label>
+        </div>
+        <div class="pt-2">
+            {% for gender in genderArr %}
+                <div class="pt-2">
+                    <label class="text-gray-700">{{gender.gender}}</label>
+                    <input type="radio" name="gender" value="{{gender.gender_id}}" {% if gender.gender == myProfile.gender %} checked {% else %} {% if display == ''%}disabled{% endif %} {% endif %} >
+                </div>
+            {% endfor %}
+        </div>
+        <p class="text-red-500">{{ errArr.gender }}</p>
+    </div>
+
+    <div class="mt-8">
+        <div>
+            <label class="text-gray-700">年代:</label>
+        </div>
+        <div class="pt-2">
+            <select class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-4 p-2.5 {% if errArr.nickname | length > 0 %} ring-2 ring-red-400 {% else %} focus:ring-2 ring-slate-200 {% endif %}" name="age" {% if display == '' %}disabled{% endif %}>
+                {% for age in ageArr %}
+                    <option value="{{age.age_id}}" {% if age.age == myProfile.age %} selected {% endif %}>{{age.age}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <p class="text-red-500">{{ errArr.age }}</p>
+    </div>
+
+    <div class="my-8">
+        <div>
+            <label class="text-gray-700">住んでる地域:</label>
+        </div>
+        <div class="pt-2">
+            <select class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-4 p-2.5 {% if errArr.nickname | length > 0 %} ring-2 ring-red-400 {% else %} focus:ring-2 ring-slate-200 {% endif %}" name="area" {% if display == '' %}disabled{% endif %}>
+                {% for area in areaArr %}
+                    <option value="{{area.area_id}}" {% if area.area == myProfile.area %} selected {% endif %}>{{area.area}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <p class="text-red-500">{{ errArr.area }}</p>
+    </div>
+
+
+    <button class="bg-gray-800 hover:bg-gray-700 text-white {{constant('music_matching_app\\master\\initMaster::BUTTON_MODEL')}}" type="submit" name="update_button" value="update">プロフィールを変更する</button>
+</form>
+
+<button class="border border-gray-700 {{constant('music_matching_app\\master\\initMaster::BUTTON_MODEL')}}" onclick="location.href='{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}myProfile.php'">戻る</button>

@@ -23,6 +23,7 @@ $init = new initMaster($db);
 [$genreArr, $areaArr] = $init->initEventList();
 
 $member_id = isset($_SESSION['member_id']) ? $_SESSION['member_id'] : '';
+$is_login = ($member_id !== '') ? true : false;
 
 $event = new Event($db);
 $searchArr = (isset($_GET)) ? $_GET : [];
@@ -39,12 +40,17 @@ if(isset($_GET['display'])){
         $res = $event->displayNewEventList($member_id, $searchArr);
     }else if($display === 'my_favorite'){
         $res = ($member_id !== '') ? $event->displayFavoriteEventList($member_id, $searchArr) : [];
+    }else if($display === 'login'){
+        header('Location: ' . Bootstrap::ENTRY_URL . 'login.php');
+        exit();
+    }else if($display === 'accountCreate'){
+        header('Location: ' . Bootstrap::ENTRY_URL . 'accountCreate.php');
+        exit();
     }
 }else{
     $res = $event->displayRecentEventList($member_id, $searchArr);
 }
 if(isset($searchArr['Genre'])) $searchGenreArr = $searchArr['Genre'];
-
 $context = [];
 $context['searchArr'] = $searchArr;
 $context['searchGenreArr'] = $searchGenreArr;
@@ -52,4 +58,5 @@ $context['genreArr'] = $genreArr;
 $context['areaArr'] = $areaArr;
 $context['display'] = $display;
 $context['res'] = $res;
-echo $twig->render('index.html.twig',$context);
+$context['is_login'] = $is_login;
+echo $twig->render('eventList.html.twig',$context);

@@ -177,9 +177,9 @@ class Event{
     {
         $this->createWhere($searchArr);
         array_push($this->joinArr, $this->artistsArr, $this->eventGenresArr, $this->areasArr);
-        if($member_id === ''){
-            array_push($this->joinArr, $this->favoriteArr);
-        }
+        // if($member_id !== ''){
+        //     array_push($this->joinArr, $this->favoriteArr);
+        // }
         $this->db->setJoins($this->joinArr);
         $groupby = 'events.event_id';
         $this->db->setGroupBy($groupby);
