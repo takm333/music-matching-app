@@ -23,12 +23,19 @@ $twig = new \Twig\Environment($loader,[
 if(isset($_POST['mail_address']) && isset($_POST['password'])){
     $dataArr = $_POST;
 
-    $validator = new UserValidator;
+    $validator = new UserValidator($db);
+    $validator->accountExists($dataArr);
     $errArr = $validator->checkError($dataArr);
     $errFlg = $validator->getErrFlg();
     if($errFlg){
-        $account->registPreAccount($dataArr['mail_address'], $dataArr['password']);
-        //登録完了画面に遷移
+        $res = $account->registPreAccount($dataArr['mail_address'], $dataArr['password']);
+        if($res){
+            echo $twig->render('provisionalRegistration.html.twig');
+            exit();
+        }else{
+            echo $twig->render('failed.html.twig');
+            exit();
+        }
     }
 }
 $context = [];

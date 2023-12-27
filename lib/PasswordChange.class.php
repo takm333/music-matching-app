@@ -4,8 +4,6 @@ namespace music_matching_app\lib;
 
 require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 
-use music_matching_app\Bootstrap;
-
 class PasswordChange
 {
     private $db = null;

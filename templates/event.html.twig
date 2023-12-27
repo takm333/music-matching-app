@@ -1,0 +1,193 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://use.fontawesome.com/releases/v6.2.0/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome-animation/0.2.1/font-awesome-animation.css" type="text/css" media="all" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}js/favorite.js"></script>
+    <script src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}js/participation.js"></script>
+    <script src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}js/modal.js"></script>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+    <title>{{eventDetail.title}}</title>
+</head>
+<body class="overflow-scroll">
+    <div class="container mx-auto max-w-[600px]">
+        <div class="mx-auto px-8 pt-4 text-[20px]">
+            <a  href="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}eventlist.php"><i class="fa-solid fa-arrow-left" style="color: #d6d6d6;"></i></a>
+        </div>
+        <div class="mx-auto px-8">
+            <div class="items-center mt-4">
+                <div class="font-bold text-3xl">
+                    {{eventDetail.title}}
+                </div>
+                <div class="mt-8">
+                    <img class="object-contain w-full rounded" src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}event_img/{{eventDetail.image}}" alt="">
+                </div>
+                <div class="mt-4 p-4 w-full border border-gray-200 text-gray-900 rounded rounded-lg">
+                    <div>
+                        日付: {{eventDetail.event_date_ja}}
+                    </div>
+                    <div class="pt-2">
+                        時間: 開場 {{eventDetail.open_time}} 開演 {{eventDetail.start_time}}
+                    </div>
+
+                    <div class="pt-2">
+                        {{eventDetail.area}} {{eventDetail.venue}}<br>
+                        <a class="text-sky-500" href="https://www.google.com/maps?q={{eventDetail.venue}}" target="_blank" rel="noopener noreferrer">地図を見る</a>
+                    </div>
+                    <div class="pt-2">
+                        <p>ウェブサイト</p>
+                        <a class="text-sky-500" href="{{eventDetail.link}}" target="_blank" rel="noopener noreferrer">{{eventDetail.link}}</a>
+                    </div>
+                    <div class="flex pt-4 text-xs text-slate-400">
+                        {% for genre in eventDetail.genre %}
+                            <div class="mx-1 px-2 bg-gray-100">
+                                {{genre}}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="mt-6 flex gap-2">
+                    <div class="w-full" id="modal">
+                        <button data-modal-target="default-modal" data-modal-toggle="default-modal" id="modal_button" class="py-3 w-full bg-gray-800 hover:bg-gray-700 rounded text-white font-bold">{% if participationStatus != '' and participationStatus != 99 %}参加中{% else %}参加する{% endif %}</button>
+                        {% if is_login %}
+                            {% include 'eventParticipation.html.twig' %}
+                        {% else %}
+                            {% include 'notLogin.html.twig' %}
+                        {% endif %}
+                    </div>
+
+                    <div class="text-[32px]">
+                        {% if is_login %}
+                            <input type="hidden" name="entry_url" id="entry_url" value="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}">
+                            <input type="hidden" name="event_id" id="event_id" value="{{eventDetail.event_id}}">
+                            {% set favorite = 1 %}
+                            {% if is_favorite == favorite %}
+                                <div class="flex w-full">
+                                    <button id="favorite_button"><i id="favorite_icon" class="fa-solid fa-heart faa-pulse animated-hover" style="color: #ff388e;">
+                                    </i></button>
+                                    <p class="font-sans px-2" id="favorites">{% if favorites > 0 %}{{favorites}}{% else %}&nbsp;{% endif %}</p>
+                                </div>
+                            {% else %}
+                                <div class="flex w-full">
+                                    <button id="favorite_button"><i id="favorite_icon" class="fa-regular fa-heart faa-pulse animated-hover" style="color: #d6d6d6;">
+                                    </i></button>
+                                    <p class="font-sans px-2" id="favorites">{% if favorites > 0 %}{{favorites}}{% else %}&nbsp;{% endif %}</p>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="flex">
+                                <button data-modal-target="default-modal" data-modal-toggle="default-modal"><i id="favorite_icon" class="fa-regular fa-heart" style="color: #d6d6d6;">
+                                </i></button>
+                                <p class="font-sans px-2" id="favorites">{% if favorites > 0 %}{{favorites}}{% else %}&nbsp;{% endif %}</p>
+                            </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+
+                <div class="mt-6 flex gap-2" id="event_participants">
+                    {# {% if participantsArr | length > 0 %} #}
+                        <div class="w-full">
+                            {% include 'eventParticipants.html.twig' %}
+                        </div>
+                    {# {% endif %} #}
+                </div>
+
+                <hr class="h-px mt-8 bg-gray-200 border-0 dark:bg-gray-700">
+
+                <div class="mt-2 w-full text-gray-900 rounded rounded-lg">
+                    <div class="font-bold">
+                        {{eventDetail.title}}
+                    </div>
+                    <div class="mt-4 pt-2">
+                        <div class="font-medium">日時</div>
+                        <p>{{eventDetail.event_date}} ({{eventDetail.dow}})</p>
+                        <p>OPEN {{eventDetail.open_time}} START {{eventDetail.start_time}}</p>
+                    </div>
+                    <div class="pt-2">
+                        <div class="font-medium">場所</div>
+                        <p>{{eventDetail.venue}}</p>
+                    </div>
+                    <div class="pt-2">
+                        <div class="font-medium">料金</div>
+                        <div class="flex">
+                            <div>
+                                {% for ticket_name in eventDetail.ticket_name %}
+                                    <p>{{ticket_name}}</p>
+                                {% endfor %}
+                            </div>
+                            &nbsp;
+                            <div>
+                                {% for price in eventDetail.price %}
+                                    <p>&yen;{{price}}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <div class="font-medium">出演</div>
+                        {% for artist_name in eventDetail.artist_name %}
+                            {{artist_name}}{% if loop.last == false %} /{% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="pt-2">
+                        <div class="font-medium">チケット情報、注意事項、お問い合わせ</div>
+                        <a class="text-sky-500" href="{{eventDetail.link}}" target="_blank" rel="noopener noreferrer">{{eventDetail.link}}</a>
+                    </div>
+                </div>
+
+
+                <div class="mt-2 w-full text-gray-900 rounded rounded-lg">
+                    <div class="mt-8 pt-2">
+                    <hr class="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700">
+                        <div class="text-sm">他のライブを見る:</div>
+                        {% for row in eventList %}
+                           <a href="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}event.php?event_id={{row.event_id}}">
+                               <div class="flex mt-4 py-2 px-4 w-full  border border-gray-200 hover:border-gray-400 text-gray-900 rounded text-sm  rounded-lg">
+                                  <div class="w-1/5">
+                                       <img class="object-contain h-20 w-20" src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}event_img/{{row.image}}" alt="">
+                                   </div>
+                                   <div class="w-4/5">
+                                       <div class="text-xs h-1/5">
+                                          <p>{{row.open_time}}</p>
+                                       </div>
+                                      <div class="font-medium text-lg h-3/5 py-2 flex item-center">
+                                           <p>{{row.title}}</p>
+                                       </div>
+                                      <div class="flex h-1/5">
+                                            <div class="w-1/5">
+                                             {{row.area}}
+                                            </div>
+                                            <div class="w-full flex">
+                                                <div>
+                                                {{row.venue}}
+                                                </div>
+                                            </div>
+                                        <div>
+                                            {% set favorite = 1 %}
+                                            {% if row.is_favorite == favorite %}
+                                                <i class="fa-solid fa-heart" style="color: #ff388e;"></i>
+                                            {% else %}
+                                                <i class="fa-regular fa-heart" style="color: #d6d6d6;"></i>
+                                            {% endif %}
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/datepicker.min.js"></script>
+</body>
+</html>

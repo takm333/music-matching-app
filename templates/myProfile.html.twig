@@ -1,0 +1,102 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://use.fontawesome.com/releases/v6.2.0/css/all.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}js/profileUpdate.js"></script>
+
+    <title>イベント一覧</title>
+</head>
+<body class="overflow-scroll">
+    <div class="container mx-auto max-w-[600px]">
+        <div class="mx-auto px-8 mt-10">
+
+            {% include 'header.html.twig' %}
+
+            <form action="">
+            <div class="mt-4 flex gap-4">
+                <div class="w-1/3 mt-4">
+                    <button class="py-2 px-4 w-full border-b text-gray-900  text-lg  {% if display == '' or display == 'update' %}font-medium border-gray-500{% else %}border-gray-300{% endif %}" type="submit" name="display" value="">
+                    プロフィール</button>
+                </div>
+                <div class="w-1/3 mt-4">
+                    <button class="py-2 px-4 w-full border-b text-gray-900 text-lg  {% if display == 'future' %}font-medium border-gray-500{% else %}border-gray-300 {% endif %}" type="submit" name="display" value="future">参加予定のライブ</button>
+                </div>
+                <div class="w-1/3 mt-4">
+                    {% if is_login %}
+                        <button class="py-2 px-4 w-full border-b text-gray-900  text-lg {% if display == 'past' %}font-medium border-gray-500{% else %}border-gray-300 {% endif %}" type="submit" name="display" value="past">参加済のライブ</button>
+                    {% else %}
+                        <button class="py-2 px-4 w-full border-b text-gray-900  text-lg {% if display == 'past' %}font-medium border-gray-500{% else %}border-gray-300 {% endif %}" type="submit" name="display" value="past">参加済のライブ</button>
+                    {% endif %}
+                </div>
+            </div>
+            </form>
+
+            {% if display == '' or display == 'update' %}
+
+                <div id="profile">
+
+                    {% if display == '' %}
+                        <form action="">
+                            <div class="flex flex-row-reverse" id="update">
+                            <button class="px-8 hover:text-sky-600 rounded-lg text-sky-500 text-xs" name="display" value="update">プロフィールを編集する</button>
+                        </div>
+                        </form>
+                        {% include "profile.html.twig" %}
+                    {% elseif display == 'update' %}
+                        {% include "updateProfile.html.twig" %}
+                    {% endif %}
+
+                </div>
+
+            {% else %}
+                {# 取得した参加予定or参加済イベントを表示 #}
+                <div class="mt-2 w-full text-gray-900 rounded rounded-lg">
+                    <div class="mt-8 pt-2">
+                        {% for row in eventList %}
+                           <a href="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}event.php?event_id={{row.event_id}}">
+                               <div class="flex mt-4 py-2 px-4 w-full  border border-gray-200 hover:border-gray-400 text-gray-900 rounded text-sm  rounded-lg">
+                                  <div class="w-1/5">
+                                       <img class="object-contain h-20 w-20" src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}event_img/{{row.image}}" alt="">
+                                   </div>
+                                   <div class="w-4/5">
+                                       <div class="text-xs h-1/5">
+                                          <p>{{row.open_time}}</p>
+                                       </div>
+                                      <div class="font-medium text-lg h-3/5 py-2 flex item-center">
+                                           <p>{{row.title}}</p>
+                                       </div>
+                                      <div class="flex h-1/5">
+                                            <div class="w-1/5">
+                                             {{row.area}}
+                                            </div>
+                                            <div class="w-full flex">
+                                                <div>
+                                                {{row.venue}}
+                                                </div>
+                                            </div>
+                                        <div>
+                                            {% set favorite = 1 %}
+                                            {% if row.is_favorite == favorite %}
+                                                <i class="fa-solid fa-heart" style="color: #ff388e;"></i>
+                                            {% else %}
+                                                <i class="fa-regular fa-heart" style="color: #d6d6d6;"></i>
+                                            {% endif %}
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/datepicker.min.js"></script>
+</body>
+</html>

@@ -17,7 +17,7 @@ class TokenManager
 
     public static function createToken()
     {
-        $token = hash('sha256',uniqid(rand(),1));
+        $token = hash('sha256',random_bytes(32));
         return $token;
     }
 
@@ -54,9 +54,11 @@ class TokenManager
         $now = new DateTime('now');
 
         if($flag !== 0){
-            $res['error'] = 'updated';
+            $res['error'] = 'このメールアドレスは既に登録されています。' . "\n" . 'ログイン画面よりログインをお願いします。';
+            $res['type'] = 'login';
         }else if($now > $expiration_date){
-            $res['error'] = 'expired';
+            $res['error'] = 'トークンの有効期限が切れています。' . "\n" . '再度新規登録をお願いします。';
+            $res['type'] = 'regist';
         }else{
             $res['is_verify'] = true;
         }

@@ -13,6 +13,7 @@ class PDODatabase{
     private $limit = '';
     private $offset = '';
     private $groupby = '';
+    private $join = '';
 
     public function __construct($db_host,$db_user,$db_pass,$db_name,$db_type)
     {
@@ -103,7 +104,23 @@ class PDODatabase{
 
     public function setGroupBy($groupby){
         if($groupby !== ''){
-            $this->groupby = 'GROUP BY' . $groupby;
+            $this->groupby = ' GROUP BY ' . $groupby;
+        }
+    }
+
+    public function setJoin($join, $on){
+        if($join !== '' && $on !== ''){
+            $this->join = ' JOIN ' . $join . ' ON ' . $on;
+        }
+    }
+
+    public function setJoins($joinArr){
+        if($joinArr !== []){
+            $join = '';
+            foreach($joinArr as $key => $row){
+                $join .= $row['join_type'] . $row['join'] . ' ON ' . $row['on'];
+            }
+            $this->join = $join;
         }
     }
 
@@ -122,10 +139,11 @@ class PDODatabase{
             break;
         }
 
+        $join = $this->join;
         $whereSQL = ($where !== '') ? ' WHERE ' . $where : '';
         $other = $this->groupby . ' ' . $this->order . ' ' . $this->limit . ' ' . $this->offset;
 
-        $sql = 'SELECT ' . $columnKey . ' FROM ' . $table . $whereSQL . $other;
+        $sql = 'SELECT ' . $columnKey . ' FROM ' . $table . $join . $whereSQL . $other;
         return $sql;
     }
 
@@ -172,7 +190,7 @@ class PDODatabase{
         $arrPreSt = [];
 
         foreach($insData as $col => $val){
-            $arrPreSt[] = $col . ' =? ';
+            $arrPreSt[] = $col . ' = ? ';
         }
         $preSt = implode(',', $arrPreSt);
 
@@ -182,6 +200,7 @@ class PDODatabase{
              . $preSt
              . ' WHERE '
              . $where;
+
 
         $updateData = array_merge(array_values($insData),$arrWhereVal);
         $this->sqlLogInfo($sql,$updateData);

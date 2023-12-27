@@ -1,0 +1,40 @@
+<div class="text-sm">参加者:</div>
+{% for row in participantsArr %}
+   <a href="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}event.php?event_id={{row.event_id}}">
+       <div class= "mt-4 py-2 px-4 w-full border border-gray-200 hover:border-gray-400 text-gray-900 rounded text-sm  rounded-lg">
+            <div class="flex">
+                <div class="px-2 text-xs text-white bg-gray-700 rounded-lg">
+                    {{row.status}}
+                </div>
+            </div>
+
+            <div class="flex mt-2">
+                <div  class="object-contain h-10 w-10">
+                    {% if row.icon != '' %}
+                        <img src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}user_image/{{row.icon}}" alt="">
+                    {% else %}
+                        <div class="flex h-min-[40px] h-full bg-gray-100">
+                            <i class="fa-solid fa-camera m-auto"></i>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="px-4 h-full flex">
+                    <div class="px-2">
+                        <p class="text-lg">{% if row.nickname != '' %}{{row.nickname}}{% else %}
+                            未設定{% endif %}</p>
+                        <p class="text-xs">{% if row.user_id != '' %}@{{row.user_id}}{% else %}
+                            未設定{% endif %}</p>
+                    </div>
+                    <div>
+                        <p class="text-lg">{% if row.gender != '' %}{{row.age}}{% else %}
+                            未設定{% endif %}</p>
+                        <p class="text-xs">{% if row.age != '' %}{{row.gender}}{% else %}
+                            未設定{% endif %}</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </a>
+{% endfor %}

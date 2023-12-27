@@ -14,5 +14,11 @@ $loader = new \Twig\Loader\FilesystemLoader(Bootstrap::TEMPLATE_DIR);
 $twig = new \Twig\Environment($loader,[
     'cache' => Bootstrap::CACHE_DIR
 ]);
-$ses->destroy();
-var_dump($_SESSION);
+$ses->checkSession();
+
+if(isset($_SESSION['member_id'])){
+    $ses->deleteSession();
+    $ses->destroy();
+}
+header('Location: ' . Bootstrap::ENTRY_URL . 'eventlist.php');
+exit();
