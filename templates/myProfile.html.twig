@@ -45,6 +45,9 @@
                             <button class="px-8 hover:text-sky-600 rounded-lg text-sky-500 text-xs" name="display" value="update">プロフィールを編集する</button>
                         </div>
                         </form>
+                        <div class="flex flex-row-reverse">
+                            <a href="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}accountRemove.php" class="px-8 hover:text-red-600 rounded-lg text-red-500 text-xs">退会する</a>
+                        </div>
                         {% include "profile.html.twig" %}
                     {% elseif display == 'update' %}
                         {% include "updateProfile.html.twig" %}

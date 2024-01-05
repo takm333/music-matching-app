@@ -56,10 +56,15 @@ class Login
     private function verifyAccountInfo($password, $accountInfo){
         if(count($accountInfo) === 0){
             throw new Exception('メールアドレスまたはパスワードが間違っています。');
-         }
-         if(password_verify($password, $accountInfo[0]['password_hash']) !== true){
+        }
+
+        if($accountInfo[0]['deleted_at'] !== NULL){
+            throw new Exception('アカウントは削除されています。');
+        }
+
+        if(password_verify($password, $accountInfo[0]['password_hash']) !== true){
              throw new Exception('メールアドレスまたはパスワードが間違っています。');
-         }
+        }
     }
 
     private function setSession($accountInfo){

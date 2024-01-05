@@ -1,4 +1,5 @@
 <div class="text-sm">参加者:</div>
+{% if is_login %}
 {% for row in participantsArr %}
    <a href="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}event.php?event_id={{row.event_id}}">
        <div class= "mt-4 py-2 px-4 w-full border border-gray-200 hover:border-gray-400 text-gray-900 rounded text-sm  rounded-lg">
@@ -38,3 +39,8 @@
         </div>
     </a>
 {% endfor %}
+{% else %}
+    <div class="text-lg font-bold mt-4">
+        ログインすると他の参加者が表示されます。
+    </div>
+{% endif %}

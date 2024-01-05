@@ -18,6 +18,9 @@ $twig = new \Twig\Environment($loader,[
     'cache' => Bootstrap::CACHE_DIR
 ]);
 $ses->checkSession();
+if(!isset($_SESSION['member_id'])){
+    header('Location: ' . Bootstrap::ENTRY_URL . 'login.php');
+}
 
 $init = new initMaster($db);
 [$genderArr, $ageArr, $areaArr, $genreArr] = $init->initProfileList();

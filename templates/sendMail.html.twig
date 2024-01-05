@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>仮登録完了</title>
+    <title>{{title}}</title>
 </head>
 <body class="overflow-scroll">
     <div class="container mx-auto max-w-[600px]">
@@ -12,12 +12,10 @@
             <img class="object-contain w-full"src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}img/logo.png" alt="">
 
             <div class="items-center mt-8">
-                <h2 class="font-bold mb-4 text-xl">仮登録が完了しました。</h2>
+                <h2 class="font-bold mb-4 text-xl">{{sub_title}}</h2>
 
                 <p class="text-gray-700 text-sm mb-10">
-                    入力いただいたメールアドレス宛に、本登録を行うためのメールを送付いたしました。<br>
-                    メールのURLより、本登録を実施してください。<br>
-                    URLの有効期限は24時間になります。
+                    {{text | nl2br}}
                 </p>
 
             </div>

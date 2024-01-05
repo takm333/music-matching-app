@@ -18,8 +18,6 @@ class PasswordReset
 
     public function resetPassword($mail_address)
     {
-        //セキュリティ対策でアカウントがなくてもメールを送ったことにする
-        echo 'メールを送信しました。';
         $accountInfo = $this->accountSearch($mail_address);
         if(!empty($accountInfo)){
             $password_reset_token = TokenManager::createToken();
@@ -37,6 +35,7 @@ class PasswordReset
             $url = Bootstrap::ENTRY_URL . 'passwordChange.php?password_reset_token=' . $password_reset_token;
             Mail::sendMail($mail_address, $subject, $url);
         }
+
     }
 
     private function accountSearch($mail_address)
