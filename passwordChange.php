@@ -31,16 +31,24 @@ if(isset($_GET['password_reset_token'])){
     $expiration_date = new DateTime($accountInfo[0]['expiration_date']);
     $res = $tokenManager->verifyToken($is_reset, $expiration_date);
     if($res['is_verify'] === false){
+        $context = [];
+        $context['title'] = Bootstrap::PASSWORD_RESET_TOKEN_FAILED_PAGE_TITLE;
+        $context['sub_title'] =Bootstrap::PASSWORD_RESET_TOKEN_FAILED_PAGE_SUBTITLE;
+        $context['text'] = Bootstrap::PASSWORD_RESET_TOKEN_FAILED_PAGE_TEXT;
+        echo $twig->render('failed.html.twig', $context);
         exit();
     }
-    echo 'tokenおｋ';
+
+    if(isset($_POST['new_password'])){
+        $newPassword = $_POST['new_password'];
+        $change = new PasswordChange($db);
+        $change->changePassword($newPassword, $member_id);
+        echo 'パスワード変更完了';
+    }
+}else{
+    header('Location: ' . Bootstrap::ENTRY_URL . 'eventlist.php');
+    exit();
 }
 
-if(isset($_POST['new_password'])){
-    $newPassword = $_POST['new_password'];
-    $change = new PasswordChange($db);
-    $change->changePassword($newPassword, $member_id);
-    echo 'パスワード変更完了';
-}
 $context = [];
 echo $twig->render('passwordChange.html.twig',[]);

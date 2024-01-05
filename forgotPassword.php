@@ -19,6 +19,11 @@ $twig = new \Twig\Environment($loader,[
 if(isset($_POST['mail_address'])){
     $reset = new PasswordReset($db);
     $reset->resetPassword($_POST['mail_address']);
+    $context['title'] = Bootstrap::PASSWORD_RESET_PAGE_TITLE;
+    $context['sub_title'] =Bootstrap::PASSWORD_RESET_SUBTITLE;
+    $context['text'] = Bootstrap::PASSWORD_RESET_TEXT;
+    echo $twig->render('sendMail.html.twig', $context);
+    exit();
 }
 $context = [];
 echo $twig->render('forgotPassword.html.twig',[]);

@@ -20,6 +20,12 @@ $twig = new \Twig\Environment($loader,[
     'cache' => Bootstrap::CACHE_DIR
 ]);
 
+$ses->checkSession();
+if(isset($_SESSION['member_id'])){
+    header('Location: ' . Bootstrap::ENTRY_URL . 'eventlist.php');
+    exit();
+}
+
 if(isset($_POST['mail_address']) && isset($_POST['password'])){
     $dataArr = $_POST;
 
@@ -30,10 +36,17 @@ if(isset($_POST['mail_address']) && isset($_POST['password'])){
     if($errFlg){
         $res = $account->registPreAccount($dataArr['mail_address'], $dataArr['password']);
         if($res){
-            echo $twig->render('provisionalRegistration.html.twig');
+            $context = [];
+            $context['title'] = Bootstrap::REGIST_PAGE_TITLE;
+            $context['sub_title'] =Bootstrap::REGIST_PAGE_SUBTITLE;
+            $context['text'] = Bootstrap::REGIST_PAGE_TEXT;
+            echo $twig->render('sendMail.html.twig', $context);
             exit();
         }else{
-            echo $twig->render('failed.html.twig');
+            $context['title'] = Bootstrap::REGIST_FAILED_PAGE_TITLE;
+            $context['sub_title'] =Bootstrap::REGIST_FAILED_PAGE_SUBTITLE;
+            $context['text'] = Bootstrap::REGIST_FAILED_PAGE_TEXT;
+            echo $twig->render('failed.html.twig', $context);
             exit();
         }
     }

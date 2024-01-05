@@ -17,7 +17,8 @@ class TokenManager
 
     public static function createToken()
     {
-        $token = hash('sha256',random_bytes(32));
+        //64文字のトークン
+        $token = bin2hex(random_bytes(32));
         return $token;
     }
 
