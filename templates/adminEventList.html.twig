@@ -1,0 +1,175 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://use.fontawesome.com/releases/v6.2.0/css/all.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+
+    <title>イベント一覧</title>
+</head>
+<body class="overflow-scroll">
+<div class="flex">
+    <div class="w-64">
+        <ul class="w-64 p-16 text-white text-lg bg-gray-700 fixed h-full">
+            <li>
+                <i class="fa-regular fa-calendar"></i> <a href="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}admin/eventlist.php"/>イベント</a>
+            </li>
+            <li class="mt-4">
+                <i class="fa-regular fa-user"></i> <a href="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}admin/userlist.php"/>ユーザー</a>
+            </li>
+            <li class="mt-4">
+                <i class="fa-regular fa-flag"></i> <a href="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}admin/noticelist.php"/>お知らせ</a>
+            </li>
+            <li class="mt-4">
+                <i class="fa-regular fa-envelope"></i> <a href="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}admin/contactlist.php"/>お問い合わせ</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="grow">
+        <div class="px-10 mt-10">
+
+            <div class="items-center mt-8">
+
+                <form action="">
+                    <div>
+                        <input class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500  focus:border-blue-500 block w-full p-2.5" type="text" name="SearchBox" value="{{searchArr.SearchBox}}" placeholder="イベント名、アーティスト名、会場名で検索ができます。">
+                    </div>
+
+                    <div class="md:flex gap-4">
+                        <div class="w-full">
+                            <select class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-4 p-2.5" name="Area">
+                                <option value="">地域</option>
+                                {% for area in areaArr %}
+                                    <option value="{{area.area_id}}" {% if area.area_id == searchArr.Area %}selected{% endif %}>{{area.area}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="w-full">
+                            <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-4 px-5 p-2.5 text-center inline-flex items-center" type="button">ジャンル
+                                <svg class="w-2.5 h-2.5 ms-auto" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                </svg>
+                            </button>
+                            <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-auto">
+                                <ul class=" py-2 text-sm text-gray-700 " aria-labelledby="dropdownDefaultButton">
+                                    <li>
+                                        {% set all = 0 %}
+                                        <input type="checkbox" name="Genre[]" value="0" id="0"  {% if all in searchGenreArr %} checked="checked" {% endif %}>
+                                        <label for="0">全て</label>
+                                    </li>
+                                    {% for genre in genreArr %}
+                                        <li>
+
+                                        <input type="checkbox" name="Genre[]" value="{{genre.genre_id}}" id="{{genre.genre_id}}" {% if genre.genre_id in searchGenreArr %} checked="checked" {% endif %}>
+                                        <label for="{{genre.genre_id}}">{{genre.genre}}</label>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <div class="relative w-1/2 mt-4">
+                            <div class="relative max-w-sm">
+                                <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                                  <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                                </svg>
+                                </div>
+                                <input datepicker datepicker-autohide type="text" class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"  value="{{searchArr.From}}" name="From"  autocomplete="off" placeholder="開始日">
+                            </div>
+                        </div>
+                        <div class="relative w-1/2 mt-4">
+                            <div class="relative max-w-sm">
+                                <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                                  <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                                </svg>
+                                </div>
+                                <input datepicker datepicker-autohide type="text" class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 "  value="{{searchArr.To}}" name="To"  autocomplete="off" placeholder="終了日">
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="display" value="{{display}}">
+
+                    <div class="flex gap-4">
+                        <div class="w-1/2 mt-4">
+                            <button class="py-2 px-4 w-full border-b text-gray-900  text-lg  {% if display == '' %}font-medium border-gray-500{% else %}border-gray-300{% endif %}" type="submit" name="display" value="">
+                            開催日順</button>
+                        </div>
+                        <div class="w-1/2 mt-4">
+                            <button class="py-2 px-4 w-full border-b text-gray-900 text-lg  {% if display == 'new' %}font-medium border-gray-500{% else %}border-gray-300 {% endif %}" type="submit" name="display" value="new">登録順</button>
+                        </div>
+                    </div>
+
+
+                    <div class="flex flex-row-reverse mt-4">
+                        <button class="w-1/5 bg-gray-600 hover:bg-gray-500 rounded-lg text-white" type="submit" name="csv" value="export">CSVエクスポート</button>
+                    </div>
+
+                    {% for row in res %}
+                       <a href="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}event.php?event_id={{row.event_id}}">
+                           <div class="flex mt-4 py-2 px-4 w-full border border-gray-200 hover:border-gray-400 text-gray-900 rounded text-sm  rounded-lg">
+                                <div class="w-1/5">
+                                   <img class="object-contain h-20 w-20" src="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}event_img/{{row.image}}" alt="">
+                                </div>
+                                <div class="w-4/5">
+                                    <div class="text-xs h-1/5">
+                                        <p>{{row.open_time}}</p>
+                                        </div>
+                                    <div class="font-medium text-lg h-3/5 py-2 flex item-center">
+                                        <p>{{row.title}}</p>
+                                    </div>
+                                    <div class="flex h-1/5">
+                                            <div class="w-1/5">
+                                            {{row.area}}
+                                            </div>
+                                        <div class="w-full flex">
+                                            <div>
+                                            {{row.venue}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
+
+                    <div class="mt-8 flex justify-center">
+                        <div class="my-auto pr-8">
+                        {% if page > 1 %}
+                            <button name="page" value="{{page - 1}}"><i class="fa-solid fa-angles-left"></i></button>
+                        {% else %}
+                            &emsp;
+                        {% endif %}
+                        </div>
+
+                        <div>
+                            {{page}}
+                        </div>
+
+                        <div class="my-auto pl-8">
+                        {% if page < maxPage %}
+                            <button name="page" value="{{page + 1}}"><i class="fa-solid fa-angles-right"></i></button>
+                        {% else %}
+                            &emsp;
+                        {% endif %}
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/datepicker.min.js"></script>
+</body>
+</html>

@@ -75,8 +75,23 @@ class Event{
 
     }
 
+    //件数
+    public function countEvents($searchArr){
+
+        $this->createWhere($searchArr);
+
+        $subSelect = '(SELECT DISTINCT events.event_id FROM events JOIN event_artists as event_artists_table ON events.event_id = event_artists_table.event_id JOIN event_genres as event_genres_table ON events.event_id = event_genres_table.event_id JOIN areas as areas_table ON events.area_id = areas_table.area_id ';
+        $where = 'WHERE ' . $this->where . ') ';
+        $subTable = 'as NUM ';
+
+        $subQuery = $subSelect . $where . $subTable;
+
+        $res = $this->db->count($subQuery, $where = '', $this->arrVal);
+        return $res;
+    }
+
     //初期表示、直近のライブ
-    public function displayRecentEventList($member_id, $searchArr = [])
+    public function displayRecentEventList($member_id, $searchArr = [],$limit = '', $offset = '')
     {
         if($member_id !== ''){
             $this->setFavoriteColumn($member_id);
@@ -92,12 +107,16 @@ class Event{
         $order = 'open_time asc';
         $this->db->setOrder($order);
 
+        if($limit !== '' && $offset !== ''){
+            $this->db->setLimitOff($limit, $offset);
+        }
+
         $res = $this->db->select($this->table, $this->column, $this->where, $this->arrVal);
         return $res;
     }
 
     //新着のライブ
-    public function displayNewEventList($member_id, $searchArr = [])
+    public function displayNewEventList($member_id, $searchArr = [],$limit = '', $offset = '')
     {
         if($member_id !== ''){
             $this->setFavoriteColumn($member_id);
@@ -112,6 +131,10 @@ class Event{
 
         $order = 'events.created_at desc';
         $this->db->setOrder($order);
+
+        if($limit !== '' && $offset !== ''){
+            $this->db->setLimitOff($limit, $offset);
+        }
 
         $res = $this->db->select($this->table, $this->column, $this->where, $this->arrVal);
         return $res;

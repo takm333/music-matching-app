@@ -3,6 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+
     <title>メールアドレスでログイン</title>
 </head>
 <body class="overflow-scroll">
@@ -14,13 +15,20 @@
             <div class="items-center mt-8">
                 <h2 class="font-bold mb-4 text-xl">メールアドレスで登録</h2>
 
-                <form method="post" action="">
+                <form id="login_form" method="post" action="">
                     {% include 'login_form.html.twig' %}
 
                     <div>
-                        <button onclick="location.href='{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}loginEmail.php'" class="bg-gray-800 hover:bg-gray-700 text-white  {{constant('music_matching_app\\master\\initMaster::BUTTON_MODEL')}} ">登録する</button>
+                        <button class="bg-gray-800 hover:bg-gray-700 text-white  {{constant('music_matching_app\\master\\initMaster::BUTTON_MODEL')}} g-recaptcha" data-sitekey="6LfYvUcpAAAAALJ83KRDyBYqTWt6Pa3Z02YHNLRK" data-callback='onSubmit' data-action='submit'>登録する</button>
                     </div>
                 </form>
+
+                <script src="https://www.google.com/recaptcha/api.js"></script>
+                <script>
+                function onSubmit(token) {
+                    document.getElementById("login_form").submit();
+                }
+                </script>
 
                 <div>
                     <button onclick="location.href='{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}accountCreate.php'" class="border border-gray-900 text-gray-800 hover:text-gray-500  {{constant('music_matching_app\\master\\initMaster::BUTTON_MODEL')}} ">他の登録方法を見る</button>
@@ -30,5 +38,6 @@
 
         </div>
     </div>
+
 </body>
 </html>
