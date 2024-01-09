@@ -15,7 +15,7 @@ class PasswordChange
 
     public function changePassword($newPassword, $member_id, $token)
     {
-        $newPassword_hash = password_hash($newPassword,PASSWORD_DEFAULT);
+        $newPassword_hash = password_hash($newPassword, PASSWORD_DEFAULT);
 
         $table = 'authentication';
         $where = ' member_id = ? ';

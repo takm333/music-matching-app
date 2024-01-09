@@ -2,8 +2,8 @@
 
 namespace music_matching_app\lib;
 
-class Participation{
-
+class Participation
+{
     private $db = null;
 
     public function __construct($db)
@@ -25,14 +25,14 @@ class Participation{
         $this->db->setLimitOff($limit, $order = '');
 
         $res = $this->db->select($table, $column, $where, $arrVal);
-        if(!empty($res)){
-            if($res[0]['deleted_at'] === null){
+        if(! empty($res)) {
+            if($res[0]['deleted_at'] === null) {
                 $participationStatus = $res[0]['status_id'];
-            }else{
+            } else {
                 //キャンセル済
                 $participationStatus = 99;
             }
-        }else{
+        } else {
             //未参加
             $participationStatus = '';
         }

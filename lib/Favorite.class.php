@@ -4,8 +4,8 @@ namespace music_matching_app\lib;
 
 require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 
-class Favorite{
-
+class Favorite
+{
     private $db = null;
 
     public function __construct($db)
@@ -31,7 +31,7 @@ class Favorite{
         $arrWhereVal = [$member_id, $event_id];
 
         $favoriteArr = $this->db->select($table, $column, $where, $arrWhereVal);
-        $is_favorite = (empty($favoriteArr) === false) ?  $favoriteArr[0]['is_favorite'] : null;
+        $is_favorite = (empty($favoriteArr) === false) ? $favoriteArr[0]['is_favorite'] : null;
         return $is_favorite;
     }
 

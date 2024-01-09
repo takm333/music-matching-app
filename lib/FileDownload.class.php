@@ -10,18 +10,18 @@ class FileDownload
 {
     public static function download($filePath, $mimeType = null)
     {
-        if(!is_readable($filePath)){
+        if(! is_readable($filePath)) {
             exit();
         }
 
         // MIMEタイプの指定がない場合、自動判定
-        if(!isset($mimeType)){
-            $finfo = new finfo;
+        if(! isset($mimeType)) {
+            $finfo = new finfo();
             $mimeType = $finfo->file($filePath, FILEINFO_MIME_TYPE);
         }
 
         //適切なMIMEタイプが得られないときはapplication/octet-stream
-        if (!preg_match('/\A\S+?\/\S+/', $mimeType)) {
+        if (! preg_match('/\A\S+?\/\S+/', $mimeType)) {
             $mimeType = 'application/octet-stream';
         }
 

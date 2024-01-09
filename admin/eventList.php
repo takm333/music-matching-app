@@ -14,7 +14,7 @@ $db = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS
 $ses = new SessionManager($db);
 
 $loader = new \Twig\Loader\FilesystemLoader(Bootstrap::TEMPLATE_DIR);
-$twig = new \Twig\Environment($loader,[
+$twig = new \Twig\Environment($loader, [
     'cache' => Bootstrap::CACHE_DIR
 ]);
 
@@ -45,19 +45,19 @@ $offset = ($page - 1) * $limit;
 $eventCounter = new Event($db);
 $eventCount = $eventCounter->countEvents($searchArr);
 
-if($csv === 'export'){
+if($csv === 'export') {
     $csvType = 'eventList';
     $csvHeader = ['イベントID', 'タイトル', '開始時刻', 'エリア', '場所'];
     $csvArr = [];
 
     $eventCsv = new Event($db);
-    if($display === ''){
+    if($display === '') {
         $res = $eventCsv->displayRecentEventList($admin, $searchArr);
-    }else if($display === 'new'){
+    } elseif($display === 'new') {
         $res = $eventCsv->displayNewEventList($admin, $searchArr);
     }
 
-    foreach($res as $value){
+    foreach($res as $value) {
         unset($value['image']);
         array_push($csvArr, $value);
     }
@@ -66,20 +66,22 @@ if($csv === 'export'){
     $csv->exportCsv($csvType, $csvHeader, $csvArr);
 }
 
-if(isset($_GET['display'])){
+if(isset($_GET['display'])) {
     $display = $_GET['display'];
-    if($display === ''){
+    if($display === '') {
         $res = $event->displayRecentEventList($admin, $searchArr, $limit, $offset);
-    }else if($display === 'new'){
+    } elseif($display === 'new') {
         $res = $event->displayNewEventList($admin, $searchArr, $limit, $offset);
     }
-}else{
+} else {
     $res = $event->displayRecentEventList($admin, $searchArr, $limit, $offset);
 }
 
 $maxPage = ceil($eventCount / $limit);
 
-if(isset($searchArr['Genre'])) $searchGenreArr = $searchArr['Genre'];
+if(isset($searchArr['Genre'])) {
+    $searchGenreArr = $searchArr['Genre'];
+}
 $context = [];
 $context['searchArr'] = $searchArr;
 $context['searchGenreArr'] = $searchGenreArr;
@@ -90,4 +92,4 @@ $context['res'] = $res;
 $context['eventCount'] = $eventCount;
 $context['page'] = $page;
 $context['maxPage'] = $maxPage;
-echo $twig->render('adminEventList.html.twig',$context);
+echo $twig->render('adminEventList.html.twig', $context);

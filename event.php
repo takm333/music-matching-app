@@ -16,16 +16,16 @@ $db = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS
 $ses = new SessionManager($db);
 
 $loader = new \Twig\Loader\FilesystemLoader(Bootstrap::TEMPLATE_DIR);
-$twig = new \Twig\Environment($loader,[
+$twig = new \Twig\Environment($loader, [
     'cache' => Bootstrap::CACHE_DIR
 ]);
 $ses->checkSession();
 
 $member_id = isset($_SESSION['member_id']) ? $_SESSION['member_id'] : '';
 $is_login = ($member_id !== '') ? true : false;
-if(isset($_GET['event_id']) && $_GET['event_id'] !== ''){
+if(isset($_GET['event_id']) && $_GET['event_id'] !== '') {
     $event_id = $_GET['event_id'];
-}else{
+} else {
     header('Location: ' . Bootstrap::ENTRY_URL . 'eventlist.php');
     exit();
 }
@@ -46,9 +46,9 @@ $participationStatus = $participation->searchParticipationStatus($member_id, $ev
 // 参加中のみ見える
 $participantsArr = [];
 // if($participationStatus !== 99 && $participationStatus !== ''){
-    $participantsDb = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS, Bootstrap::DB_NAME, Bootstrap::DB_TYPE);
-    $participants = new EventParticipants($participantsDb);
-    $participantsArr = $participants->searchEventParticipants($member_id, $event_id);
+$participantsDb = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS, Bootstrap::DB_NAME, Bootstrap::DB_TYPE);
+$participants = new EventParticipants($participantsDb);
+$participantsArr = $participants->searchEventParticipants($member_id, $event_id);
 // }
 
 //イベント情報取得
@@ -71,4 +71,4 @@ $context['participationStatus'] = $participationStatus;
 $context['eventList'] = $eventList;
 $context['participantsArr'] = $participantsArr;
 
-echo $twig->render('event.html.twig',$context);
+echo $twig->render('event.html.twig', $context);

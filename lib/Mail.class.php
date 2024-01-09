@@ -6,8 +6,8 @@ use music_matching_app\Bootstrap;
 
 require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 
-class Mail{
-
+class Mail
+{
     public static function sendMail($to, $subject, $text = '')
     {
         $headers = 'From: '. Bootstrap::FROM_MAIL_ADDRESS . "\r\n";

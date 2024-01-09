@@ -20,12 +20,12 @@ class Login
     public function loginEmail($mail_address, $password)
     {
         $accountInfo = $this->searchAccount($mail_address, $password);
-        try{
+        try {
             $this->verifyAccountInfo($password, $accountInfo);
             $this->setSession($accountInfo);
             header('Location: ' . Bootstrap::ENTRY_URL . 'eventlist.php');
             exit();
-        }catch(Exception $e){
+        } catch(Exception $e) {
             return $e->getMessage();
         }
     }
@@ -33,11 +33,11 @@ class Login
     public function firstLoginEmail($mail_address, $password)
     {
         $accountInfo = $this->searchAccount($mail_address, $password);
-        try{
+        try {
             $this->setSession($accountInfo);
             header('Location: ' . Bootstrap::ENTRY_URL . 'eventlist.php');
             exit();
-        }catch(Exception $e){
+        } catch(Exception $e) {
             echo $e->getMessage();
         }
     }
@@ -53,26 +53,28 @@ class Login
         return $accountInfo;
     }
 
-    private function verifyAccountInfo($password, $accountInfo){
-        if(count($accountInfo) === 0){
+    private function verifyAccountInfo($password, $accountInfo)
+    {
+        if(count($accountInfo) === 0) {
             throw new Exception('メールアドレスまたはパスワードが間違っています。');
         }
 
-        if($accountInfo[0]['deleted_at'] !== NULL){
+        if($accountInfo[0]['deleted_at'] !== null) {
             throw new Exception('アカウントは削除されています。');
         }
 
-        if(password_verify($password, $accountInfo[0]['password_hash']) !== true){
-             throw new Exception('メールアドレスまたはパスワードが間違っています。');
+        if(password_verify($password, $accountInfo[0]['password_hash']) !== true) {
+            throw new Exception('メールアドレスまたはパスワードが間違っています。');
         }
     }
 
-    private function setSession($accountInfo){
+    private function setSession($accountInfo)
+    {
         $key = 'member_id';
         $login_member_id = $accountInfo[0]['member_id'];
 
         $ses = new SessionManager($this->db);
-        session_regenerate_id(TRUE);
+        session_regenerate_id(true);
         $ses->session_id = session_id();
         $ses->set($key, $login_member_id);
         $ses->insertSession($login_member_id);

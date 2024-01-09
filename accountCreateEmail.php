@@ -17,23 +17,23 @@ $dataArr = [];
 $errArr = [];
 
 $loader = new \Twig\Loader\FilesystemLoader(Bootstrap::TEMPLATE_DIR);
-$twig = new \Twig\Environment($loader,[
+$twig = new \Twig\Environment($loader, [
     'cache' => Bootstrap::CACHE_DIR
 ]);
 
 $ses->checkSession();
-if(isset($_SESSION['member_id'])){
+if(isset($_SESSION['member_id'])) {
     header('Location: ' . Bootstrap::ENTRY_URL . 'eventlist.php');
     exit();
 }
 
-if(isset($_POST['mail_address']) && isset($_POST['password'])){
+if(isset($_POST['mail_address']) && isset($_POST['password'])) {
     $recaptcha = new Recaptcha();
     $res = $recaptcha->checkBot();
 
-    if($res !== true){
+    if($res !== true) {
         $context['title'] = Bootstrap::REGIST_FAILED_PAGE_TITLE;
-        $context['sub_title'] =Bootstrap::REGIST_FAILED_PAGE_SUBTITLE;
+        $context['sub_title'] = Bootstrap::REGIST_FAILED_PAGE_SUBTITLE;
         $context['text'] = Bootstrap::REGIST_FAILED_PAGE_TEXT;
         echo $twig->render('failed.html.twig', $context);
         exit();
@@ -45,18 +45,18 @@ if(isset($_POST['mail_address']) && isset($_POST['password'])){
     $validator->accountExists($dataArr);
     $errArr = $validator->checkError($dataArr);
     $errFlg = $validator->getErrFlg();
-    if($errFlg){
+    if($errFlg) {
         $res = $account->registPreAccount($dataArr['mail_address'], $dataArr['password']);
-        if($res){
+        if($res) {
             $context = [];
             $context['title'] = Bootstrap::REGIST_PAGE_TITLE;
-            $context['sub_title'] =Bootstrap::REGIST_PAGE_SUBTITLE;
+            $context['sub_title'] = Bootstrap::REGIST_PAGE_SUBTITLE;
             $context['text'] = Bootstrap::REGIST_PAGE_TEXT;
             echo $twig->render('sendMail.html.twig', $context);
             exit();
-        }else{
+        } else {
             $context['title'] = Bootstrap::REGIST_FAILED_PAGE_TITLE;
-            $context['sub_title'] =Bootstrap::REGIST_FAILED_PAGE_SUBTITLE;
+            $context['sub_title'] = Bootstrap::REGIST_FAILED_PAGE_SUBTITLE;
             $context['text'] = Bootstrap::REGIST_FAILED_PAGE_TEXT;
             echo $twig->render('failed.html.twig', $context);
             exit();
@@ -66,4 +66,4 @@ if(isset($_POST['mail_address']) && isset($_POST['password'])){
 $context = [];
 $context['dataArr'] = $dataArr;
 $context['errArr'] = $errArr;
-echo $twig->render('accountCreateEmail.html.twig',$context);
+echo $twig->render('accountCreateEmail.html.twig', $context);

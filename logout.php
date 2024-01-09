@@ -11,12 +11,12 @@ $db = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS
 $ses = new SessionManager($db);
 
 $loader = new \Twig\Loader\FilesystemLoader(Bootstrap::TEMPLATE_DIR);
-$twig = new \Twig\Environment($loader,[
+$twig = new \Twig\Environment($loader, [
     'cache' => Bootstrap::CACHE_DIR
 ]);
 $ses->checkSession();
 
-if(isset($_SESSION['member_id'])){
+if(isset($_SESSION['member_id'])) {
     $ses->deleteSession();
     $ses->destroy();
 }

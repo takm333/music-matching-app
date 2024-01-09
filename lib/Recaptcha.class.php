@@ -4,8 +4,8 @@ namespace music_matching_app\lib;
 
 use music_matching_app\Bootstrap;
 
-class Recaptcha{
-
+class Recaptcha
+{
     private $recap_response = null;
 
     public function __construct()
@@ -16,7 +16,7 @@ class Recaptcha{
     public function checkBot()
     {
         $recap_response = json_decode($this->recap_response);
-        if($recap_response->success === false){
+        if($recap_response->success === false) {
             return false;
         }
         return true;

@@ -7,7 +7,6 @@ use DateTime;
 
 class TokenManager
 {
-
     private $db = null;
 
     public function __construct($db)
@@ -29,7 +28,7 @@ class TokenManager
         $where = '';
         $arrVal = '';
 
-        switch($token_type){
+        switch($token_type) {
             case 'account_regist':
                 $table = 'pre_users';
                 $column = '';
@@ -45,7 +44,7 @@ class TokenManager
                 break;
         }
 
-        return $accountInfo = $this->db->select($table, $column ,$where, $arrVal);
+        return $accountInfo = $this->db->select($table, $column, $where, $arrVal);
     }
 
     public function verifyToken($flag, $expiration_date)
@@ -54,13 +53,13 @@ class TokenManager
 
         $now = new DateTime('now');
 
-        if($flag !== 0){
+        if($flag !== 0) {
             $res['error'] = 'このメールアドレスは既に登録されています。' . "\n" . 'ログイン画面よりログインをお願いします。';
             $res['type'] = 'login';
-        }else if($now > $expiration_date){
+        } elseif($now > $expiration_date) {
             $res['error'] = 'トークンの有効期限が切れています。' . "\n" . '再度新規登録をお願いします。';
             $res['type'] = 'regist';
-        }else{
+        } else {
             $res['is_verify'] = true;
         }
         return $res;

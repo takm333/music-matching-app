@@ -4,8 +4,8 @@ namespace music_matching_app\lib;
 
 require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 
-class EventParticipants{
-
+class EventParticipants
+{
     private $db = null;
 
     public function __construct($db)

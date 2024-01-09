@@ -12,18 +12,18 @@ $db = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS
 $ses = new SessionManager($db);
 
 $loader = new \Twig\Loader\FilesystemLoader(Bootstrap::TEMPLATE_DIR);
-$twig = new \Twig\Environment($loader,[
+$twig = new \Twig\Environment($loader, [
     'cache' => Bootstrap::CACHE_DIR
 ]);
 
-if(isset($_POST['mail_address'])){
+if(isset($_POST['mail_address'])) {
     $reset = new PasswordReset($db);
     $reset->resetPassword($_POST['mail_address']);
     $context['title'] = Bootstrap::PASSWORD_RESET_PAGE_TITLE;
-    $context['sub_title'] =Bootstrap::PASSWORD_RESET_SUBTITLE;
+    $context['sub_title'] = Bootstrap::PASSWORD_RESET_SUBTITLE;
     $context['text'] = Bootstrap::PASSWORD_RESET_TEXT;
     echo $twig->render('sendMail.html.twig', $context);
     exit();
 }
 $context = [];
-echo $twig->render('forgotPassword.html.twig',[]);
+echo $twig->render('forgotPassword.html.twig', []);

@@ -16,23 +16,23 @@ $dataArr = [];
 $errArr = [];
 
 $loader = new \Twig\Loader\FilesystemLoader(Bootstrap::TEMPLATE_DIR);
-$twig = new \Twig\Environment($loader,[
+$twig = new \Twig\Environment($loader, [
     'cache' => Bootstrap::CACHE_DIR
 ]);
 $ses->checkSession();
 
-if(isset($_SESSION['member_id'])){
+if(isset($_SESSION['member_id'])) {
     header('Location: ' . Bootstrap::ENTRY_URL . 'eventlist.php');
 }
 
-if(isset($_POST['mail_address']) && isset($_POST['password'])){
+if(isset($_POST['mail_address']) && isset($_POST['password'])) {
 
     $recaptcha = new Recaptcha();
     $res = $recaptcha->checkBot();
 
-    if($res !== true){
+    if($res !== true) {
         $context['title'] = Bootstrap::REGIST_FAILED_PAGE_TITLE;
-        $context['sub_title'] =Bootstrap::REGIST_FAILED_PAGE_SUBTITLE;
+        $context['sub_title'] = Bootstrap::REGIST_FAILED_PAGE_SUBTITLE;
         $context['text'] = Bootstrap::REGIST_FAILED_PAGE_TEXT;
         echo $twig->render('failed.html.twig', $context);
         exit();
@@ -43,7 +43,7 @@ if(isset($_POST['mail_address']) && isset($_POST['password'])){
     $validator = new UserValidator($db);
     $errArr = $validator->checkError($dataArr);
     $errFlg = $validator->getErrFlg();
-    if($errFlg){
+    if($errFlg) {
         $login = new Login($db);
         $errArr['mail_address'] = $login->loginEmail($_POST['mail_address'], $_POST['password']);
         $errArr['password'] = ' ';
@@ -53,4 +53,4 @@ if(isset($_POST['mail_address']) && isset($_POST['password'])){
 $context = [];
 $context['dataArr'] = $dataArr;
 $context['errArr'] = $errArr;
-echo $twig->render('loginEmail.html.twig',$context);
+echo $twig->render('loginEmail.html.twig', $context);
