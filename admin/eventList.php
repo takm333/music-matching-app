@@ -4,6 +4,7 @@ namespace music_matching_app;
 
 require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 
+use music_matching_app\lib\CsvExport;
 use music_matching_app\lib\PDODatabase;
 use music_matching_app\lib\SessionManager;
 use music_matching_app\lib\Event;
@@ -33,9 +34,7 @@ $csv = (isset($searchArr['csv'])) ? $searchArr['csv'] : '';
 unset($searchArr['display']);
 unset($searchArr['csv']);
 
-if($csv === 'export'){
-    echo 'a';
-}
+
 
 //管理者はmember_idを持たないため、空文字
 $admin = '';
@@ -45,6 +44,27 @@ $offset = ($page - 1) * $limit;
 
 $eventCounter = new Event($db);
 $eventCount = $eventCounter->countEvents($searchArr);
+
+if($csv === 'export'){
+    $csvType = 'eventList';
+    $csvHeader = ['イベントID', 'タイトル', '開始時刻', 'エリア', '場所'];
+    $csvArr = [];
+
+    $eventCsv = new Event($db);
+    if($display === ''){
+        $res = $eventCsv->displayRecentEventList($admin, $searchArr);
+    }else if($display === 'new'){
+        $res = $eventCsv->displayNewEventList($admin, $searchArr);
+    }
+
+    foreach($res as $value){
+        unset($value['image']);
+        array_push($csvArr, $value);
+    }
+
+    $csv = new CsvExport();
+    $csv->exportCsv($csvType, $csvHeader, $csvArr);
+}
 
 if(isset($_GET['display'])){
     $display = $_GET['display'];
