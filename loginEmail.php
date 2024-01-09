@@ -8,6 +8,7 @@ use music_matching_app\lib\PDODatabase;
 use music_matching_app\lib\Login;
 use music_matching_app\lib\SessionManager;
 use music_matching_app\lib\UserValidator;
+use music_matching_app\lib\Recaptcha;
 
 $db = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS, Bootstrap::DB_NAME, Bootstrap::DB_TYPE);
 $ses = new SessionManager($db);
@@ -25,6 +26,18 @@ if(isset($_SESSION['member_id'])){
 }
 
 if(isset($_POST['mail_address']) && isset($_POST['password'])){
+
+    $recaptcha = new Recaptcha();
+    $res = $recaptcha->checkBot();
+
+    if($res !== true){
+        $context['title'] = Bootstrap::REGIST_FAILED_PAGE_TITLE;
+        $context['sub_title'] =Bootstrap::REGIST_FAILED_PAGE_SUBTITLE;
+        $context['text'] = Bootstrap::REGIST_FAILED_PAGE_TEXT;
+        echo $twig->render('failed.html.twig', $context);
+        exit();
+    }
+
     $dataArr = $_POST;
 
     $validator = new UserValidator($db);

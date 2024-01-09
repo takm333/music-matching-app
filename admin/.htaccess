@@ -1,0 +1,4 @@
+AuthUserFile "C:/xampp/htdocs/music_matching_app/admin/.htpasswd"
+AuthName "IDとパスワードを入力してください"
+AuthType BASIC
+require valid-user
