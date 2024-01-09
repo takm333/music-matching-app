@@ -13,6 +13,7 @@ class CsvExport{
             mkdir($csvDir, 0777);
         }
         $fileName = $csvDir . '/' . $csvType . '_' . date('Ymd_His') . '_' . uniqid()  .'.csv';
+        $mimeType = 'text/csv';
 
         array_unshift($csvArr, $csvHeader);
         touch($fileName);
@@ -21,7 +22,7 @@ class CsvExport{
             fputcsv($fp, $value);
         }
 
-        FileDownload::download($fileName, 'text/csv');
+        FileDownload::download($fileName, $mimeType);
     }
 
 }
