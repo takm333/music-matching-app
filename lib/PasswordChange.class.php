@@ -13,7 +13,7 @@ class PasswordChange
         $this->db = $db;
     }
 
-    public function changePassword($newPassword, $member_id)
+    public function changePassword($newPassword, $member_id, $token)
     {
         $newPassword_hash = password_hash($newPassword,PASSWORD_DEFAULT);
 
@@ -25,7 +25,16 @@ class PasswordChange
         $arrWhereVal = [$member_id];
 
         $res = $this->db->update($table, $where, $insData, $arrWhereVal);
+
+        $table = 'password_reset';
+        $where = 'password_reset_token = ?';
+        $insData = [
+            'is_reset' => 1
+        ];
+        $arrWhereVal = [$token];
+
+        $res = $this->db->update($table, $where, $insData, $arrWhereVal);
+
         return $res;
-        //ログインする
     }
 }
