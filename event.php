@@ -53,12 +53,16 @@ $participantsArr = $participants->searchEventParticipants($member_id, $event_id)
 
 //イベント情報取得
 $eventDb = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS, Bootstrap::DB_NAME, Bootstrap::DB_TYPE);
-$event = new Event($eventDb);
+$event = new Event($eventDb, $member_id);
 $eventDetail = $event->displayDetailEvent($event_id, $member_id);
+
+$eventStart = date($eventDetail['event_date'] . ' ' . $eventDetail['open_time'] . ':00');
+$now = date('Y-m-d H:i:s');
+$eventDate = ($eventStart < $now) ? 'past' : 'future';
 
 //他のイベント情報取得
 $eventListDb = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS, Bootstrap::DB_NAME, Bootstrap::DB_TYPE);
-$eventList = new Event($eventDb);
+$eventList = new Event($eventDb, $member_id);
 $eventList = $eventList->displayNewEventList($member_id, []);
 
 $context = [];
@@ -70,5 +74,6 @@ $context['statusArr'] = $statusArr;
 $context['participationStatus'] = $participationStatus;
 $context['eventList'] = $eventList;
 $context['participantsArr'] = $participantsArr;
+$context['eventDate'] = $eventDate;
 
 echo $twig->render('event.html.twig', $context);

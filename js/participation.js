@@ -4,10 +4,11 @@ $(function() {
         let entry_url = $('#entry_url').val();
 
         let formData = $(this).serializeArray();
+        console.log(formData);
         $.ajax({
             type : "post",
             url : entry_url + "/participation.php",
-            data :formData,
+            data : formData,
         }).then(
             function(data){
                 if(data === 'no' || data === ''){
@@ -28,7 +29,6 @@ $(function() {
         let entry_url = $('#entry_url').val();
 
         let formData = $(this).serializeArray();
-        console.log(formData);
         $.ajax({
             type : "post",
             url : entry_url + "/participation.php",

@@ -62,4 +62,32 @@ class EventParticipants
         $res = count($res) !== 0 ? $res : [];
         return $res;
     }
+
+    public function getNumberOfParticipants($eventInfo)
+    {
+        $participantsArr = [];
+        foreach($eventInfo as  $val){
+            $participants = $this->countEventParticipants($val['event_id']);
+            array_push($participantsArr, $participants);
+        }
+        return $participantsArr;
+    }
+
+    //イベント参加人数（管理画面用、ユーザー画面に流用する場合自分も含んだ人数になるため注意）
+    public function countEventParticipants($event_id)
+    {
+        $table = 'event_participants';
+        $where = 'id in (SELECT
+                            MAX(id) as max_id
+                        FROM
+                            event_participants
+                        WHERE
+                            event_id = ?
+                        GROUP BY member_id)
+                  AND deleted_at is null';
+        $arrVal = [$event_id];
+
+        $participants = $this->db->count($table, $where, $arrVal);
+        return $participants;
+    }
 }

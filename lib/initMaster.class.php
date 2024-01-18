@@ -13,6 +13,23 @@ class initMaster
         $this->db = $db;
     }
 
+    public function adminEventList()
+    {
+        $tableHeaderArr = [
+            'ID',
+            'タイトル',
+            '開催時刻',
+            'エリア',
+            '開場',
+            '参加人数',
+            'お気に入り数',
+            '詳細',
+            '編集',
+            '削除'
+        ];
+        return $tableHeaderArr;
+    }
+
     public function initEventList()
     {
         $genreArr = $this->createGenreArr();

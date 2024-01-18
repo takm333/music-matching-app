@@ -6,7 +6,7 @@ use finfo;
 
 require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 
-class FileDownload
+class File
 {
     public static function download($filePath, $mimeType = null)
     {
@@ -15,7 +15,7 @@ class FileDownload
         }
 
         // MIMEタイプの指定がない場合、自動判定
-        if(! isset($mimeType)) {
+        if(!isset($mimeType)) {
             $finfo = new finfo();
             $mimeType = $finfo->file($filePath, FILEINFO_MIME_TYPE);
         }
@@ -42,5 +42,26 @@ class FileDownload
         readfile($filePath);
         exit();
 
+    }
+
+    public static function isCsv($file = '')
+    {
+        if($file !== [] &&  $file['size'] !== 0) {
+            //対応している拡張子
+            $extensionArr = [
+                'text/csv',
+                'text/plain'
+            ];
+
+            $finfo = new finfo();
+            $mimeType = $finfo->file($file['tmp_name'], FILEINFO_MIME_TYPE);
+
+            if(!in_array($mimeType, $extensionArr) ) {
+                echo 'a';
+                return false;
+            }
+
+            return true;
+        }
     }
 }

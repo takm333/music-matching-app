@@ -42,8 +42,8 @@ if(isset($_POST['mail_address']) && isset($_POST['password'])) {
     $dataArr = $_POST;
 
     $validator = new UserValidator($db);
-    $validator->accountExists($dataArr);
-    $errArr = $validator->checkError($dataArr);
+    $type = 'create';
+    $errArr = $validator->checkError($dataArr, $type);
     $errFlg = $validator->getErrFlg();
     if($errFlg) {
         $res = $account->registPreAccount($dataArr['mail_address'], $dataArr['password']);

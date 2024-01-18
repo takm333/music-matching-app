@@ -41,7 +41,8 @@ if(isset($_POST['mail_address']) && isset($_POST['password'])) {
     $dataArr = $_POST;
 
     $validator = new UserValidator($db);
-    $errArr = $validator->checkError($dataArr);
+    $type = 'login';
+    $errArr = $validator->checkError($dataArr, $type);
     $errFlg = $validator->getErrFlg();
     if($errFlg) {
         $login = new Login($db);

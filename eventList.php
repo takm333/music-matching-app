@@ -25,7 +25,7 @@ $init = new initMaster($db);
 $member_id = isset($_SESSION['member_id']) ? $_SESSION['member_id'] : '';
 $is_login = ($member_id !== '') ? true : false;
 
-$event = new Event($db);
+$event = new Event($db, $member_id);
 $searchArr = (isset($_GET)) ? $_GET : [];
 $searchGenreArr = [];
 $res = [];

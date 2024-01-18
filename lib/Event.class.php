@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 class Event
 {
     private $db = null;
-    private $from = '0000-00-00 00:00:00';
+    private $from = '';
     private $to = '9999-12-31 23:59:59';
     private $table = '';
     private $column = '';
@@ -23,9 +23,10 @@ class Event
     private $priceArr = [];
     private $dowArr = ['日', '月', '火', '水', '木', '金', '土'];
 
-    public function __construct($db)
+    public function __construct($db,$member_id)
     {
         $this->db = $db;
+        $this->from = $member_id === 'admin' ? '0000-00-00 00:00:00' : date('Y-m-d H:i:s');
         $this->table = 'events';
         $this->column = 'events.event_id, title, image, open_time, areas_table.area, venue';
         $this->where = '';
@@ -78,8 +79,8 @@ class Event
     //件数
     public function countEvents($searchArr)
     {
-
         $this->createWhere($searchArr);
+        $this->createBetween($this->from, $this->to);
 
         $subSelect = '(SELECT DISTINCT events.event_id FROM events JOIN event_artists as event_artists_table ON events.event_id = event_artists_table.event_id JOIN event_genres as event_genres_table ON events.event_id = event_genres_table.event_id JOIN areas as areas_table ON events.area_id = areas_table.area_id ';
         $where = 'WHERE ' . $this->where . ') ';
@@ -94,7 +95,7 @@ class Event
     //初期表示、直近のライブ
     public function displayRecentEventList($member_id, $searchArr = [], $limit = '', $offset = '')
     {
-        if($member_id !== '') {
+        if($member_id !== '' && $member_id !== 'admin') {
             $this->setFavoriteColumn($member_id);
         }
 
@@ -112,6 +113,8 @@ class Event
             $this->db->setLimitOff($limit, $offset);
         }
 
+        $this->createBetween($this->from, $this->to);
+
         $res = $this->db->select($this->table, $this->column, $this->where, $this->arrVal);
         return $res;
     }
@@ -119,7 +122,7 @@ class Event
     //新着のライブ
     public function displayNewEventList($member_id, $searchArr = [], $limit = '', $offset = '')
     {
-        if($member_id !== '') {
+        if($member_id !== '' && $member_id !== 'admin') {
             $this->setFavoriteColumn($member_id);
         }
 
@@ -130,12 +133,14 @@ class Event
             $this->db->setJoins($this->joinArr);
         }
 
-        $order = 'events.created_at desc';
+        $order = 'events.event_id desc';
         $this->db->setOrder($order);
 
         if($limit !== '' && $offset !== '') {
             $this->db->setLimitOff($limit, $offset);
         }
+
+        $this->createBetween($this->from, $this->to);
 
         $res = $this->db->select($this->table, $this->column, $this->where, $this->arrVal);
         return $res;
@@ -156,6 +161,8 @@ class Event
         }
         $order = 'open_time asc';
         $this->db->setOrder($order);
+
+        $this->createBetween($this->from, $this->to);
 
         $res = $this->db->select($this->table, $this->column, $this->where, $this->arrVal);
         return $res;
@@ -259,7 +266,6 @@ class Event
                 $this->$createCondition($val);
             }
         }
-        $this->createBetween($this->from, $this->to);
     }
 
     private function createSearchBox($val)
@@ -325,7 +331,6 @@ class Event
 
     private function createBetween($from, $to)
     {
-
         $this->setAnd();
 
         $between = 'events.open_time BETWEEN ? AND ? ';

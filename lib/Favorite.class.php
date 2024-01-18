@@ -13,6 +13,16 @@ class Favorite
         $this->db = $db;
     }
 
+
+    public function getNumberOfFavorites($eventInfo){
+        $favoritesArr = [];
+        foreach($eventInfo as $val){
+            $favorites = $this->countFavorite($val['event_id']);
+            array_push($favoritesArr, $favorites);
+        }
+        return $favoritesArr;
+    }
+
     public function countFavorite($event_id)
     {
         $table = 'user_favorites';

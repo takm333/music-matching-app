@@ -39,12 +39,13 @@ class UserValidator
     }
 
     //新規登録時
-    public function checkError($dataArr)
+    public function checkError($dataArr, $type)
     {
         $this->dataArr = $dataArr;
         $this->createErrorMessage();
         $this->mail_address_check();
         $this->password_check();
+        if($type === 'create') $this->accountExists($dataArr);
 
         return $this->errArr;
     }
@@ -66,7 +67,7 @@ class UserValidator
         }
     }
 
-    public function accountExists($dataArr)
+    private function accountExists($dataArr)
     {
         $table = 'authentication';
         $where = ' mail_address = ? ';
@@ -75,6 +76,7 @@ class UserValidator
         if($count !== 0) {
             $this->errArr['mail_address'] = 'このメールアドレスは既に登録されています。';
         }
+
     }
 
 
