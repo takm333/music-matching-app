@@ -2,7 +2,11 @@
 
 namespace music_matching_app\lib;
 
-class PDODatabase{
+use PDO;
+use PDOException;
+
+class PDODatabase
+{
     private $dbh = null;
     private $db_host = '';
     private $db_name = '';
@@ -15,9 +19,9 @@ class PDODatabase{
     private $groupby = '';
     private $join = '';
 
-    public function __construct($db_host,$db_user,$db_pass,$db_name,$db_type)
+    public function __construct($db_host, $db_user, $db_pass, $db_name, $db_type)
     {
-        $this->dbh = $this->connectDB($db_host,$db_user,$db_pass,$db_name,$db_type);
+        $this->dbh = $this->connectDB($db_host, $db_user, $db_pass, $db_name, $db_type);
         $this->db_host = $db_host;
         $this->db_user = $db_user;
         $this->db_pass = $db_pass;
@@ -29,13 +33,13 @@ class PDODatabase{
         $this->groupby = '';
     }
 
-    private function connectDB($db_host,$db_user,$db_pass,$db_name,$db_type)
+    private function connectDB($db_host, $db_user, $db_pass, $db_name, $db_type)
     {
-        try{
+        try {
             $dsn = 'mysql:host=' . $db_host . ';dbname=' . $db_name;
-            $dbh = new \PDO($dsn,$db_user,$db_pass);
+            $dbh = new PDO($dsn, $db_user, $db_pass);
             $dbh->query('SET NAMES utf8');
-        }catch(\PDOException $e){
+        } catch(PDOException $e) {
             var_dump($e->getMessage());
             exit();
         }
@@ -56,12 +60,12 @@ class PDODatabase{
 
         $stmt = $this->dbh->prepare($sql);
         $res = $stmt->execute($arrVal);
-        if($res === false){
+        if($res === false) {
             $this->catchError($stmt->errorInfo());
         }
 
         $data = [];
-        while($result = $stmt->fetch(\PDO::FETCH_ASSOC)){
+        while($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
             array_push($data, $result);
         }
 
@@ -76,48 +80,51 @@ class PDODatabase{
 
         $stmt = $this->dbh->prepare($sql);
         $res = $stmt->execute($arrVal);
-        if($res === false){
+        if($res === false) {
             $this->catchError($stmt->errorInfo());
         }
 
-        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return intval($result['NUM']);
     }
 
     public function setOrder($order = '')
     {
-        if($order !== ''){
+        if($order !== '') {
             $this->order = ' ORDER BY ' . $order;
         }
     }
 
     public function setLimitOff($limit = '', $offset = '')
     {
-        if($limit !== ''){
+        if($limit !== '') {
             $this->limit = ' LIMIT ' . $limit;
         }
-        if($offset !== ''){
+        if($offset !== '') {
             $this->offset = ' OFFSET ' . $offset;
         }
     }
 
-    public function setGroupBy($groupby){
-        if($groupby !== ''){
+    public function setGroupBy($groupby)
+    {
+        if($groupby !== '') {
             $this->groupby = ' GROUP BY ' . $groupby;
         }
     }
 
-    public function setJoin($join, $on){
-        if($join !== '' && $on !== ''){
+    public function setJoin($join, $on)
+    {
+        if($join !== '' && $on !== '') {
             $this->join = ' JOIN ' . $join . ' ON ' . $on;
         }
     }
 
-    public function setJoins($joinArr){
-        if($joinArr !== []){
+    public function setJoins($joinArr)
+    {
+        if($joinArr !== []) {
             $join = '';
-            foreach($joinArr as $key => $row){
+            foreach($joinArr as $key => $row) {
                 $join .= $row['join_type'] . $row['join'] . ' ON ' . $row['on'];
             }
             $this->join = $join;
@@ -126,7 +133,7 @@ class PDODatabase{
 
     private function getSql($type, $table, $where = '', $column = '')
     {
-        switch($type){
+        switch($type) {
             case 'select':
                 $columnKey = ($column !== '') ? $column : '*';
                 break;
@@ -136,7 +143,7 @@ class PDODatabase{
                 break;
 
             default:
-            break;
+                break;
         }
 
         $join = $this->join;
@@ -156,14 +163,14 @@ class PDODatabase{
         $columns = '';
         $preSt = '';
 
-        foreach($insData as $col => $val){
+        foreach($insData as $col => $val) {
             $insDataKey[] = $col;
             $insDataVal[] = $val;
             $preCnt[] = '?';
         }
 
         $columns = implode(',', $insDataKey);
-        $preSt = implode(',' , $preCnt);
+        $preSt = implode(',', $preCnt);
 
         $sql = 'INSERT INTO '
             .  $table
@@ -178,7 +185,7 @@ class PDODatabase{
         $stmt = $this->dbh->prepare($sql);
         $res = $stmt->execute($insDataVal);
 
-        if($res === false){
+        if($res === false) {
             $this->catchError($stmt->errorInfo());
         }
 
@@ -189,7 +196,7 @@ class PDODatabase{
     {
         $arrPreSt = [];
 
-        foreach($insData as $col => $val){
+        foreach($insData as $col => $val) {
             $arrPreSt[] = $col . ' = ? ';
         }
         $preSt = implode(',', $arrPreSt);
@@ -202,13 +209,13 @@ class PDODatabase{
              . $where;
 
 
-        $updateData = array_merge(array_values($insData),$arrWhereVal);
-        $this->sqlLogInfo($sql,$updateData);
+        $updateData = array_merge(array_values($insData), $arrWhereVal);
+        $this->sqlLogInfo($sql, $updateData);
 
         $stmt = $this->dbh->prepare($sql);
         $res = $stmt->execute($updateData);
 
-        if($res === false){
+        if($res === false) {
             $this->catchError($stmt->errorInfo());
         }
 
@@ -222,18 +229,18 @@ class PDODatabase{
 
     private function catchError($errArr = [])
     {
-        $errMsg = (!empty($errArr[2])) ? $errArr[2] : '';
+        $errMsg = (! empty($errArr[2])) ? $errArr[2] : '';
         die('SQLエラーが発生しました。' . $errMsg);
     }
 
     private function makeLogFile()
     {
         $logDir = dirname(__FILE__) . '/logs';
-        if(!file_exists($logDir)){
+        if(! file_exists($logDir)) {
             mkdir($logDir, 0777);
         }
         $logPath = $logDir . '/sql.log';
-        if(!file_exists($logPath)){
+        if(! file_exists($logPath)) {
             touch($logPath);
         }
         return $logPath;

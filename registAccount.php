@@ -15,35 +15,35 @@ $db = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS
 $ses = new SessionManager($db);
 
 $loader = new \Twig\Loader\FilesystemLoader(Bootstrap::TEMPLATE_DIR);
-$twig = new \Twig\Environment($loader,[
+$twig = new \Twig\Environment($loader, [
     'cache' => Bootstrap::CACHE_DIR
 ]);
 
-if(isset($_GET['url_token'])){
+if(isset($_GET['url_token'])) {
     $token = $_GET['url_token'];
     $token_type = 'account_regist';
 
     $tokenManager = new TokenManager($db);
     $accountInfo = $tokenManager->tokenExists($token, $token_type);
-    if(count($accountInfo) !== 0){
+    if(count($accountInfo) !== 0) {
         $is_registered = $accountInfo[0]['is_registered'];
         $expiration_date = new DateTime($accountInfo[0]['expiration_date']);
         $res = $tokenManager->verifyToken($is_registered, $expiration_date);
-        if($res['is_verify']){
+        if($res['is_verify']) {
             $accountCreate = new AccountCreateEmail($db);
             $member_id = $accountCreate->registAccount($accountInfo[0]);
             $login = new Login($db);
             $login->firstLoginEmail($accountInfo[0]['mail_address'], $accountInfo[0]['password_hash']);
             exit();
-        }else{
+        } else {
             $errMsg = $res['error'];
             $type = $res['type'];
         }
-    }else{
+    } else {
         $errMsg = '不正なリクエストです。';
         $type = 'login';
     }
-}else{
+} else {
     $errMsg = '不正なリクエストです。';
     $type = 'login';
 }
@@ -51,4 +51,4 @@ if(isset($_GET['url_token'])){
 $context = [];
 $context['errMsg'] = $errMsg;
 $context['type'] = $type;
-echo $twig->render('error.html.twig',$context);
+echo $twig->render('error.html.twig', $context);

@@ -1,19 +1,19 @@
 $(function() {
     $('#modal_button').click(function() {
 
-    let event_id = $('#event_id').val();
-    let entry_url = $('#entry_url').val();
+      let event_id = $('#event_id').val();
+      let entry_url = $('#entry_url').val();
 
-    $.ajax({
-        type: "get",
-        url : entry_url + "/modal.php?event_id=" + encodeURIComponent(event_id),
-    }).then(
-        function(data){
-            updateModalContent(data)
-        },
-        function(data){
-        },
-    );
+      $.ajax({
+          type: "get",
+          url : entry_url + "/modal.php?event_id=" + encodeURIComponent(event_id),
+      }).then(
+          function(data){
+              updateModalContent(data)
+          },
+          function(data){
+          },
+      );
     });
 
     // モーダルの内容を更新する関数

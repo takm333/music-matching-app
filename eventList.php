@@ -14,7 +14,7 @@ $db = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS
 $ses = new SessionManager($db);
 
 $loader = new \Twig\Loader\FilesystemLoader(Bootstrap::TEMPLATE_DIR);
-$twig = new \Twig\Environment($loader,[
+$twig = new \Twig\Environment($loader, [
     'cache' => Bootstrap::CACHE_DIR
 ]);
 $ses->checkSession();
@@ -25,32 +25,34 @@ $init = new initMaster($db);
 $member_id = isset($_SESSION['member_id']) ? $_SESSION['member_id'] : '';
 $is_login = ($member_id !== '') ? true : false;
 
-$event = new Event($db);
+$event = new Event($db, $member_id);
 $searchArr = (isset($_GET)) ? $_GET : [];
 $searchGenreArr = [];
 $res = [];
 $display = (isset($searchArr['display'])) ? $searchArr['display'] : '';
 unset($searchArr['display']);
 
-if(isset($_GET['display'])){
+if(isset($_GET['display'])) {
     $display = $_GET['display'];
-    if($display === ''){
+    if($display === '') {
         $res = $event->displayRecentEventList($member_id, $searchArr);
-    }else if($display === 'new'){
+    } elseif($display === 'new') {
         $res = $event->displayNewEventList($member_id, $searchArr);
-    }else if($display === 'my_favorite'){
+    } elseif($display === 'my_favorite') {
         $res = ($member_id !== '') ? $event->displayFavoriteEventList($member_id, $searchArr) : [];
-    }else if($display === 'login'){
+    } elseif($display === 'login') {
         header('Location: ' . Bootstrap::ENTRY_URL . 'login.php');
         exit();
-    }else if($display === 'accountCreate'){
+    } elseif($display === 'accountCreate') {
         header('Location: ' . Bootstrap::ENTRY_URL . 'accountCreate.php');
         exit();
     }
-}else{
+} else {
     $res = $event->displayRecentEventList($member_id, $searchArr);
 }
-if(isset($searchArr['Genre'])) $searchGenreArr = $searchArr['Genre'];
+if(isset($searchArr['Genre'])) {
+    $searchGenreArr = $searchArr['Genre'];
+}
 $context = [];
 $context['searchArr'] = $searchArr;
 $context['searchGenreArr'] = $searchGenreArr;
@@ -59,4 +61,4 @@ $context['areaArr'] = $areaArr;
 $context['display'] = $display;
 $context['res'] = $res;
 $context['is_login'] = $is_login;
-echo $twig->render('eventList.html.twig',$context);
+echo $twig->render('eventList.html.twig', $context);

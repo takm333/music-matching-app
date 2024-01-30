@@ -4,8 +4,8 @@ namespace music_matching_app\lib;
 
 require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 
-class EventParticipants{
-
+class EventParticipants
+{
     private $db = null;
 
     public function __construct($db)
@@ -13,12 +13,21 @@ class EventParticipants{
         $this->db = $db;
     }
 
-    public function searchEventParticipants($member_id, $event_id)
+    public function searchEventParticipants($member_id, $event_id, $participationStatus)
     {
+        //マッチング対象のステータスIDを設定
+        if($participationStatus === 1){
+            $searchParticipationStatus = 1;
+        }else if($participationStatus === 2){
+            $searchParticipationStatus = 3;
+        }else{
+            $searchParticipationStatus = 2;
+        }
+
         $table = 'users';
         $column = 'icon, nickname, user_id, participant_status.status, genders.gender, ages.age';
         $where = '';
-        $arrVal = [$member_id, $event_id];
+        $arrVal = [$member_id, $event_id, $searchParticipationStatus];
 
         $joinArr = [];
 
@@ -31,6 +40,7 @@ class EventParticipants{
                         WHERE
                             member_id != ?
                         AND event_id = ?
+                        AND status_id = ?
                         AND deleted_at is null
                         GROUP BY member_id
                         ORDER BY max_id DESC) as participants ',
@@ -61,5 +71,33 @@ class EventParticipants{
         $res = $this->db->select($table, $column, $where, $arrVal);
         $res = count($res) !== 0 ? $res : [];
         return $res;
+    }
+
+    public function getNumberOfParticipants($eventInfo)
+    {
+        $participantsArr = [];
+        foreach($eventInfo as  $val){
+            $participants = $this->countEventParticipants($val['event_id']);
+            array_push($participantsArr, $participants);
+        }
+        return $participantsArr;
+    }
+
+    //イベント参加人数（管理画面用、ユーザー画面に流用する場合自分も含んだ人数になるため注意）
+    public function countEventParticipants($event_id)
+    {
+        $table = 'event_participants';
+        $where = 'id in (SELECT
+                            MAX(id) as max_id
+                        FROM
+                            event_participants
+                        WHERE
+                            event_id = ?
+                        GROUP BY member_id)
+                  AND deleted_at is null';
+        $arrVal = [$event_id];
+
+        $participants = $this->db->count($table, $where, $arrVal);
+        return $participants;
     }
 }

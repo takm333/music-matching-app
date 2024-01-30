@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
     <title>{{eventDetail.title}}</title>
 </head>
-<body class="overflow-scroll">
+<body class="overflow-scroll overflow-x-hidden">
     <div class="container mx-auto max-w-[600px]">
         <div class="mx-auto px-8 pt-4 text-[20px]">
             <a  href="{{constant('music_matching_app\\Bootstrap::ENTRY_URL')}}eventlist.php"><i class="fa-solid fa-arrow-left" style="color: #d6d6d6;"></i></a>
@@ -52,7 +52,19 @@
 
                 <div class="mt-6 flex gap-2">
                     <div class="w-full" id="modal">
-                        <button data-modal-target="default-modal" data-modal-toggle="default-modal" id="modal_button" class="py-3 w-full bg-gray-800 hover:bg-gray-700 rounded text-white font-bold">{% if participationStatus != '' and participationStatus != 99 %}参加中{% else %}参加する{% endif %}</button>
+                        {% if eventDate == 'future' %}
+                            <button data-modal-target="default-modal" data-modal-toggle="default-modal" id="modal_button" class="py-3 w-full bg-gray-800 hover:bg-gray-700 rounded text-white font-bold">
+                                {% if participationStatus != '' and participationStatus != 99 %}
+                                    参加中
+                                {% else %}
+                                    参加する
+                                {% endif %}
+                            </button>
+                        {% else %}
+                            <button class="py-3 w-full bg-gray-600 rounded text-white font-bold" disabled>
+                                開催済
+                            </button>
+                        {% endif %}
                         {% if is_login %}
                             {% include 'eventParticipation.html.twig' %}
                         {% else %}

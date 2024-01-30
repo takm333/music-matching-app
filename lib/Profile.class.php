@@ -2,8 +2,8 @@
 
 namespace music_matching_app\lib;
 
-class Profile{
-
+class Profile
+{
     private $db = null;
 
     public function __construct($db)
@@ -36,10 +36,10 @@ class Profile{
 
         [$deletedArr, $insertArr] = $this->createUsersGenreUpdateData($member_id, $profile);
 
-        if(!empty($deletedArr)){
+        if(! empty($deletedArr)) {
             $this->deleteUsersGenre($member_id, $deletedArr);
         }
-        if(!empty($insertArr)){
+        if(! empty($insertArr)) {
             $this->insertUsersGenre($member_id, $insertArr);
         }
 
@@ -58,7 +58,7 @@ class Profile{
             'area_id' => $profile['area']
         ];
         // 画像空ではない場合、更新する
-        if($imageName !== ''){
+        if($imageName !== '') {
             $insData['icon'] = $imageName;
         }
         $arrWhereVal = [$member_id];
@@ -77,11 +77,11 @@ class Profile{
         $arrVal = [$member_id];
 
         $beforeGenreArr = $this->db->select($table, $column, $where, $arrVal);
-        foreach($beforeGenreArr as $key => $val){
+        foreach($beforeGenreArr as $key => $val) {
             $before[] = $val['genre_id'];
         }
 
-        foreach($profile['genre'] as $key => $val){
+        foreach($profile['genre'] as $key => $val) {
             $after[] = $val;
         }
 
@@ -91,10 +91,10 @@ class Profile{
 
         $deletedArr = [];
         $insertArr = [];
-        foreach($diff as $key => $val){
-            if(in_array($val, $before)){
+        foreach($diff as $key => $val) {
+            if(in_array($val, $before)) {
                 $deletedArr[] = $val;
-            }else{
+            } else {
                 $insertArr[] = $val;
             }
         }
@@ -119,13 +119,13 @@ class Profile{
     private function insertUsersGenre($member_id, $insertArr)
     {
         $table = 'user_genres';
-        foreach($insertArr as $key => $val){
+        foreach($insertArr as $key => $val) {
             $insData = [
                 'member_id' => $member_id,
                 'genre_id' => $val
             ];
 
-        $this->db->insert($table, $insData);
+            $this->db->insert($table, $insData);
         }
     }
 
@@ -205,7 +205,7 @@ class Profile{
             'on' => 'users.area_id = areas.area_id'
         ];
 
-        array_push($joinArr, $userGenresArr, $genresArr,  $gendersArr, $agesArr, $areasArr);
+        array_push($joinArr, $userGenresArr, $genresArr, $gendersArr, $agesArr, $areasArr);
 
         $this->db->setJoins($joinArr);
         $res = $this->db->select($table, $column, $where, $arrVal);
@@ -215,14 +215,14 @@ class Profile{
 
     private function formatProfile($res)
     {
-        if(empty($res)){
+        if(empty($res)) {
             $profile = [];
             return $profile;
         }
         $profile = $res[0];
         $profile['genre'] = [];
 
-        foreach($res as $row){
+        foreach($res as $row) {
             $profile['genre'][] = $row['genre'];
         }
 

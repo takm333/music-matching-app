@@ -14,12 +14,12 @@ $db = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS
 $ses = new SessionManager($db);
 
 $loader = new \Twig\Loader\FilesystemLoader(Bootstrap::TEMPLATE_DIR);
-$twig = new \Twig\Environment($loader,[
+$twig = new \Twig\Environment($loader, [
     'cache' => Bootstrap::CACHE_DIR
 ]);
 $res = [];
 
-if(isset($_GET['password_reset_token'])){
+if(isset($_GET['password_reset_token'])) {
     $token = $_GET['password_reset_token'];
     $token_type = 'password_reset';
 
@@ -28,7 +28,7 @@ if(isset($_GET['password_reset_token'])){
 
     $is_reset = $accountInfo[0]['is_reset'];
     var_dump($is_reset);
-    if($is_reset !== 0){
+    if($is_reset !== 0) {
         $context = [];
         $context['title'] = Bootstrap::PASSWORD_RESET_TOKEN_FAILED_PAGE_TITLE;
         $context['sub_title'] = Bootstrap::PASSWORD_RESET_TOKEN_FAILED_PAGE_SUBTITLE;
@@ -39,10 +39,10 @@ if(isset($_GET['password_reset_token'])){
     $member_id = $accountInfo[0]['member_id'];
     $expiration_date = new DateTime($accountInfo[0]['expiration_date']);
     $res = $tokenManager->verifyToken($is_reset, $expiration_date);
-    if($res['is_verify'] === false){
+    if($res['is_verify'] === false) {
         $context = [];
         $context['title'] = Bootstrap::PASSWORD_RESET_TOKEN_FAILED_PAGE_TITLE;
-        $context['sub_title'] =Bootstrap::PASSWORD_RESET_TOKEN_FAILED_PAGE_SUBTITLE;
+        $context['sub_title'] = Bootstrap::PASSWORD_RESET_TOKEN_FAILED_PAGE_SUBTITLE;
         $context['text'] = Bootstrap::PASSWORD_RESET_TOKEN_FAILED_PAGE_TEXT;
         $context = [];
         $context['changed'] = 'changed';
@@ -50,19 +50,19 @@ if(isset($_GET['password_reset_token'])){
         exit();
     }
 
-    if(isset($_POST['new_password'])){
+    if(isset($_POST['new_password'])) {
         $newPassword = $_POST['new_password'];
         $change = new PasswordChange($db);
         $res = $change->changePassword($newPassword, $member_id, $token);
-        if($res){
-            echo $twig->render('passwordChangeCompleted.html.twig',[]);
+        if($res) {
+            echo $twig->render('passwordChangeCompleted.html.twig', []);
             exit();
         }
     }
-}else{
+} else {
     header('Location: ' . Bootstrap::ENTRY_URL . 'eventlist.php');
     exit();
 }
 
 $context = [];
-echo $twig->render('passwordChange.html.twig',[]);
+echo $twig->render('passwordChange.html.twig', []);

@@ -4,13 +4,30 @@ namespace music_matching_app\lib;
 
 require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 
-class initMaster{
-
+class initMaster
+{
     private $db = null;
 
     public function __construct($db)
     {
         $this->db = $db;
+    }
+
+    public function adminEventList()
+    {
+        $tableHeaderArr = [
+            'ID',
+            'タイトル',
+            '開催時刻',
+            'エリア',
+            '開場',
+            '参加人数',
+            'お気に入り数',
+            '詳細',
+            '編集',
+            '削除'
+        ];
+        return $tableHeaderArr;
     }
 
     public function initEventList()

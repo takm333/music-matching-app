@@ -4,10 +4,10 @@ namespace music_matching_app\lib;
 
 require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 
-class Event{
-
+class Event
+{
     private $db = null;
-    private $from = '0000-00-00 00:00:00';
+    private $from = '';
     private $to = '9999-12-31 23:59:59';
     private $table = '';
     private $column = '';
@@ -23,9 +23,10 @@ class Event{
     private $priceArr = [];
     private $dowArr = ['日', '月', '火', '水', '木', '金', '土'];
 
-    public function __construct($db)
+    public function __construct($db,$member_id)
     {
         $this->db = $db;
+        $this->from = $member_id === 'admin' ? '0000-00-00 00:00:00' : date('Y-m-d H:i:s');
         $this->table = 'events';
         $this->column = 'events.event_id, title, image, open_time, areas_table.area, venue';
         $this->where = '';
@@ -76,9 +77,10 @@ class Event{
     }
 
     //件数
-    public function countEvents($searchArr){
-
+    public function countEvents($searchArr)
+    {
         $this->createWhere($searchArr);
+        $this->createBetween($this->from, $this->to);
 
         $subSelect = '(SELECT DISTINCT events.event_id FROM events JOIN event_artists as event_artists_table ON events.event_id = event_artists_table.event_id JOIN event_genres as event_genres_table ON events.event_id = event_genres_table.event_id JOIN areas as areas_table ON events.area_id = areas_table.area_id ';
         $where = 'WHERE ' . $this->where . ') ';
@@ -91,50 +93,54 @@ class Event{
     }
 
     //初期表示、直近のライブ
-    public function displayRecentEventList($member_id, $searchArr = [],$limit = '', $offset = '')
+    public function displayRecentEventList($member_id, $searchArr = [], $limit = '', $offset = '')
     {
-        if($member_id !== ''){
+        if($member_id !== '' && $member_id !== 'admin') {
             $this->setFavoriteColumn($member_id);
         }
 
-        if($searchArr !== []){
+        if($searchArr !== []) {
             $this->setCondition($searchArr, $member_id);
-        }else{
-            $this->joinArr []= $this->areasArr;
+        } else {
+            $this->joinArr [] = $this->areasArr;
             $this->db->setJoins($this->joinArr);
         }
 
         $order = 'open_time asc';
         $this->db->setOrder($order);
 
-        if($limit !== '' && $offset !== ''){
+        if($limit !== '' && $offset !== '') {
             $this->db->setLimitOff($limit, $offset);
         }
+
+        $this->createBetween($this->from, $this->to);
 
         $res = $this->db->select($this->table, $this->column, $this->where, $this->arrVal);
         return $res;
     }
 
     //新着のライブ
-    public function displayNewEventList($member_id, $searchArr = [],$limit = '', $offset = '')
+    public function displayNewEventList($member_id, $searchArr = [], $limit = '', $offset = '')
     {
-        if($member_id !== ''){
+        if($member_id !== '' && $member_id !== 'admin') {
             $this->setFavoriteColumn($member_id);
         }
 
-        if($searchArr !== []){
+        if($searchArr !== []) {
             $this->setCondition($searchArr, $member_id);
-        }else{
-            $this->joinArr []= $this->areasArr;
+        } else {
+            $this->joinArr [] = $this->areasArr;
             $this->db->setJoins($this->joinArr);
         }
 
-        $order = 'events.created_at desc';
+        $order = 'events.event_id desc';
         $this->db->setOrder($order);
 
-        if($limit !== '' && $offset !== ''){
+        if($limit !== '' && $offset !== '') {
             $this->db->setLimitOff($limit, $offset);
         }
+
+        $this->createBetween($this->from, $this->to);
 
         $res = $this->db->select($this->table, $this->column, $this->where, $this->arrVal);
         return $res;
@@ -143,18 +149,20 @@ class Event{
     //お気に入り
     public function displayFavoriteEventList($member_id, $searchArr = [])
     {
-        if($member_id !== ''){
+        if($member_id !== '') {
             $this->setOnlyFavoriteColumn($member_id);
         }
 
-        if($searchArr !== []){
+        if($searchArr !== []) {
             $this->setCondition($searchArr, $member_id);
-        }else{
-            $this->joinArr []= $this->areasArr;
+        } else {
+            $this->joinArr [] = $this->areasArr;
             $this->db->setJoins($this->joinArr);
         }
         $order = 'open_time asc';
         $this->db->setOrder($order);
+
+        $this->createBetween($this->from, $this->to);
 
         $res = $this->db->select($this->table, $this->column, $this->where, $this->arrVal);
         return $res;
@@ -163,7 +171,7 @@ class Event{
     //イベント詳細
     public function displayDetailEvent($event_id, $member_id = '')
     {
-        if($member_id !== ''){
+        if($member_id !== '') {
             $this->setFavoriteColumn($member_id);
         }
 
@@ -214,9 +222,9 @@ class Event{
         $this->setAnd();
 
         $this->column .= ', start_time, link, event_prices_table.ticket_name,event_prices_table.price, event_artists_table.artist_name, genres_table.genre';
-        $this->arrVal []= $event_id;
+        $this->arrVal [] = $event_id;
         $this->where .= ' events.event_id = ? ';
-        array_push($this->joinArr, $this->artistsArr, $this->eventGenresArr,$this->genresArr,  $this->areasArr, $this->priceArr);
+        array_push($this->joinArr, $this->artistsArr, $this->eventGenresArr, $this->genresArr, $this->areasArr, $this->priceArr);
     }
 
     private function formatEventDetail($res)
@@ -232,18 +240,18 @@ class Event{
         $eventDetail['artist_name'] =  [];
         $eventDetail['genre'] =  [];
 
-        foreach($res as $row){
-            if(!in_array($row['ticket_name'], $eventDetail['ticket_name'])){
-                $eventDetail['ticket_name'] []= $row['ticket_name'];
+        foreach($res as $row) {
+            if(! in_array($row['ticket_name'], $eventDetail['ticket_name'])) {
+                $eventDetail['ticket_name'] [] = $row['ticket_name'];
             }
-            if(!in_array($row['price'], $eventDetail['price'])){
-                $eventDetail['price'] []= $row['price'];
+            if(! in_array($row['price'], $eventDetail['price'])) {
+                $eventDetail['price'] [] = $row['price'];
             }
-            if(!in_array($row['artist_name'], $eventDetail['artist_name'])){
-                $eventDetail['artist_name'] []= $row['artist_name'];
+            if(! in_array($row['artist_name'], $eventDetail['artist_name'])) {
+                $eventDetail['artist_name'] [] = $row['artist_name'];
             }
-            if(!in_array($row['genre'], $eventDetail['genre'])){
-                $eventDetail['genre'] []= $row['genre'];
+            if(! in_array($row['genre'], $eventDetail['genre'])) {
+                $eventDetail['genre'] [] = $row['genre'];
             }
         }
         return $eventDetail;
@@ -251,14 +259,13 @@ class Event{
 
     private function createWhere($searchArr)
     {
-        foreach($searchArr as $col => $val){
-            if($val !== ""){
+        foreach($searchArr as $col => $val) {
+            if($val !== "") {
                 //name属性から関数名を作って実行
                 $createCondition = 'create' . $col;
                 $this->$createCondition($val);
             }
         }
-        $this->createBetween($this->from, $this->to);
     }
 
     private function createSearchBox($val)
@@ -270,8 +277,8 @@ class Event{
 
         $this->where .= $searchBox;
         $i = 0;
-        while($i < $preCnt){
-            $this->arrVal []= '%' . $val . '%';
+        while($i < $preCnt) {
+            $this->arrVal [] = '%' . $val . '%';
             $i++;
         }
     }
@@ -283,29 +290,29 @@ class Event{
         $area = '(events.area_id = ? ) ';
 
         $this->where .= $area;
-        $this->arrVal []= $val;
+        $this->arrVal [] = $val;
     }
 
     private function createGenre($val)
     {
-        if($val[0] !== '0'){
+        if($val[0] !== '0') {
             $this->setAnd();
 
             $genre = '( event_genres_table.genre_id';
             $this->where .= $genre;
 
             $preCnt = count($val);
-            if($preCnt === 1){
+            if($preCnt === 1) {
                 $this->where .= ' = ? ) ';
-                $this->arrVal []= $val[0];
-            }else{
+                $this->arrVal [] = $val[0];
+            } else {
                 $this->where .= ' in (';
                 $commaCnt = $preCnt - 1;
                 $i = 0;
-                while($i < $preCnt){
-                    $this->where .= ($i < $commaCnt) ?  ' ?,' : ' ?';
-                    $this->arrVal []= $val[$i];
-                    $i ++;
+                while($i < $preCnt) {
+                    $this->where .= ($i < $commaCnt) ? ' ?,' : ' ?';
+                    $this->arrVal [] = $val[$i];
+                    $i++;
                 }
                 $this->where .= ' ) ) ';
             }
@@ -324,7 +331,6 @@ class Event{
 
     private function createBetween($from, $to)
     {
-
         $this->setAnd();
 
         $between = 'events.open_time BETWEEN ? AND ? ';
@@ -334,7 +340,7 @@ class Event{
 
     private function setAnd()
     {
-        if($this->where !== ''){
+        if($this->where !== '') {
             $this->where .= ' AND ';
         }
     }

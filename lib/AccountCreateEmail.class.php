@@ -7,8 +7,8 @@ require_once dirname(__FILE__) . '/../Bootstrap.class.php';
 use music_matching_app\Bootstrap;
 use music_matching_app\lib\Mail;
 
-class AccountCreateEmail{
-
+class AccountCreateEmail
+{
     private $db = null;
 
     public function __construct($db)
@@ -16,7 +16,8 @@ class AccountCreateEmail{
         $this->db = $db;
     }
 
-    public function registPreAccount($mail_address,$password){
+    public function registPreAccount($mail_address, $password)
+    {
         //未登録
         $url = $this->createPreAccount($mail_address, $password, $this->db);
         $textUrl = Bootstrap::REGIST_EMAIL_TEXT_URL;
@@ -29,7 +30,8 @@ class AccountCreateEmail{
     }
 
 
-    private function createPreAccount($mail_address, $password, $db){
+    private function createPreAccount($mail_address, $password, $db)
+    {
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
         $url_token = TokenManager::createToken();
 

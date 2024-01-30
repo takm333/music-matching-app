@@ -19,7 +19,7 @@ class PasswordReset
     public function resetPassword($mail_address)
     {
         $accountInfo = $this->accountSearch($mail_address);
-        if(!empty($accountInfo)){
+        if(! empty($accountInfo)) {
             $password_reset_token = TokenManager::createToken();
 
             $table = 'password_reset';

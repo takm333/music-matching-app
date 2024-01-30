@@ -11,7 +11,9 @@ class SessionManager
 
     public function __construct($db)
     {
-        if(isset($_SESSION) === false) session_start();
+        if(isset($_SESSION) === false) {
+            session_start();
+        }
 
 
         $this->session_id = session_id();
@@ -42,9 +44,9 @@ class SessionManager
     public function checkSession()
     {
         $member_id = $this->selectSession();
-        if($member_id !== false){
+        if($member_id !== false) {
             $_SESSION['member_id'] = $member_id;
-        // }else{
+            // }else{
             //セッションIDがない(初めてこのサイトに来ている)
             // $res = $this->insertSession($login_member_id);
             // if($res === true){
