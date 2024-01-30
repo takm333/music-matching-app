@@ -13,12 +13,21 @@ class EventParticipants
         $this->db = $db;
     }
 
-    public function searchEventParticipants($member_id, $event_id)
+    public function searchEventParticipants($member_id, $event_id, $participationStatus)
     {
+        //マッチング対象のステータスIDを設定
+        if($participationStatus === 1){
+            $searchParticipationStatus = 1;
+        }else if($participationStatus === 2){
+            $searchParticipationStatus = 3;
+        }else{
+            $searchParticipationStatus = 2;
+        }
+
         $table = 'users';
         $column = 'icon, nickname, user_id, participant_status.status, genders.gender, ages.age';
         $where = '';
-        $arrVal = [$member_id, $event_id];
+        $arrVal = [$member_id, $event_id, $searchParticipationStatus];
 
         $joinArr = [];
 
@@ -31,6 +40,7 @@ class EventParticipants
                         WHERE
                             member_id != ?
                         AND event_id = ?
+                        AND status_id = ?
                         AND deleted_at is null
                         GROUP BY member_id
                         ORDER BY max_id DESC) as participants ',

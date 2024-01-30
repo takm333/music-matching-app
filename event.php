@@ -45,11 +45,11 @@ $participationStatus = $participation->searchParticipationStatus($member_id, $ev
 // 他の参加者
 // 参加中のみ見える
 $participantsArr = [];
-// if($participationStatus !== 99 && $participationStatus !== ''){
+if($participationStatus !== 99 && $participationStatus !== ''){
 $participantsDb = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS, Bootstrap::DB_NAME, Bootstrap::DB_TYPE);
 $participants = new EventParticipants($participantsDb);
-$participantsArr = $participants->searchEventParticipants($member_id, $event_id);
-// }
+$participantsArr = $participants->searchEventParticipants($member_id, $event_id, $participationStatus);
+}
 
 //イベント情報取得
 $eventDb = new PDODatabase(Bootstrap::DB_HOST, Bootstrap::DB_USER, Bootstrap::DB_PASS, Bootstrap::DB_NAME, Bootstrap::DB_TYPE);
