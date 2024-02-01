@@ -11,23 +11,7 @@
 ユーザーはイベントごとに自分の状態を登録できます。
 自分のステータスに対し、適切なユーザーが表示されマッチングが可能になります。
 
-## 画面、機能紹介
-**イベント一覧**  
-![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/3637197/5d78af8f-792b-8b12-dad3-14ee8ebf8a92.png)
-
-
-**イベントに参加（ステータス更新）**
-![status_change.gif](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/3637197/9511d39e-7cf4-47ff-ce13-57a5f1385570.gif)
-
-
-**お気に入り**
-![favorite.gif](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/3637197/aded7d50-9bf6-21e6-c9d0-4cbffed5d7ff.gif)
-
-
-**管理者画面**
-![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/3637197/efb27097-8241-a2ab-c195-81c87522cacd.png)
-
-### 主な機能
+## 機能一覧
 **ユーザー用**
 * アカウント登録、退会
 * パスワード変更
@@ -42,6 +26,19 @@
 * イベント一覧、検索機能(参加人数、お気に入り数も表示)
 * CSVインポート、エクスポート機能
 
+## 使用画面イメージ
+**イベント一覧**
+![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/3637197/5d78af8f-792b-8b12-dad3-14ee8ebf8a92.png)
+
+**イベントに参加（ステータス更新）**
+![status_change.gif](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/3637197/ac31cb41-ee05-f527-99b5-687f798086f0.gif)
+
+**お気に入り**
+![favorite.gif](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/3637197/b821ae2a-875d-3b3b-b4d3-ab3364e2d761.gif)
+
+**管理者画面**
+![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/3637197/efb27097-8241-a2ab-c195-81c87522cacd.png)
+
 ## 作ろうと思った理由、経緯
 プライベートで自分だけが興味があるイベントに行くときは、一人で行くことがよくありました。  
 同じ趣味の人とイベントに行けたら楽しそうだな～と感じており、イベント系のアプリケーションを開発したいと考えていました。  
@@ -49,18 +46,18 @@
 
 難しそうと思いましたが、同時に面白そう！技術が身につきそう！と思ったため、実際に開発を行いました。  
 ## 使用技術、ツール
-### バックエンド
-* PHP 8.2
-* Twig 3.8
-### フロントエンド
-* Tailwind CSS 3.4
-* Font Awesome
-* jQuery
-### DBMS
-* MySQL
-### ツール
-* GitHub
-* Visual Studio Code
+* **バックエンド**
+    * PHP 8.2
+    * Twig 3.8
+* **フロントエンド**
+    * Tailwind CSS 3.4
+    * Font Awesome
+    * jQuery
+* **DBMS**
+    * MySQL
+* **ツール**
+    * GitHub
+    * Visual Studio Code
 ## 技術選定の理由
 **PHP、Twig、jQuery、MySQL**  
 弊社PHPスクールにて、学習を行ったため。
